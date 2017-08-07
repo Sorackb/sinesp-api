@@ -1,0 +1,31 @@
+{
+  "name": "sinesp-api",
+  "version": "0.0.1",
+  "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
+  "main": "sinesp-api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sorackb/sinesp-api.git"
+  },
+  "keywords": [
+    "sinesp",
+    "plate",
+    "placa"
+  ],
+  "author": "Lucas Souza <sorackb@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sorackb/sinesp-api/issues"
+  },
+  "homepage": "https://github.com/Sorackb/sinesp-api#readme",
+  "dependencies": {
+    "crypto": "0.0.3",
+    "moment": "^2.18.1",
+    "request": "^2.81.0",
+    "uuid": "^3.1.0",
+    "xml2js": "^0.4.17"
+  }
+}
