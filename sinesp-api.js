@@ -116,8 +116,3 @@ function _generateLatitude() {
 function _generateLongitude() {
   return _generateCoordinate() - 3.7506985;
 }
-
-_search('BPG0795')
-    .then(JSON.stringify)
-    .then(console.log)
-    .catch(console.error);
