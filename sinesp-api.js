@@ -8,9 +8,11 @@ var request = require('request');
 var xml2js  = require('xml2js');
 var xml;
 
-const URL     = 'https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v2';
-const SECRET  = 'XvAmRTGhQchFwzwduKYK';
-const HEADERS = {
+const PLATE_FORMAT = /^[a-z]{3}\d{4}$/gim;
+const SPECIAL      = /[^a-zA-Z\d]/gi;
+const URL          = 'https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v2';
+const SECRET       = 'XvAmRTGhQchFwzwduKYK';
+const HEADERS      = {
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
   'Host': 'sinespcidadao.sinesp.gov.br'
 };
@@ -27,27 +29,40 @@ function _init() {
 
 function _search(plate) {
   return new Promise(function(resolve, reject) {
-    var body = _generateBody(plate);
-
-    _request(body)
+    _validate(plate)
+        .then(_generateBody)
+        .then(_request)
         .then(resolve)
         .catch(reject);
   });
 }
 
+function _validate(plate) {
+  return new Promise(function(resolve, reject) {
+    plate = plate.replace(SPECIAL, '');
+
+    if (PLATE_FORMAT.test(plate)) {
+      resolve(plate);
+    } else {
+      reject('Formato de placa inválido! Utilize o formato "AAA999" ou "AAA-9999".');
+    }
+  });
+}
+
 function _generateBody(plate) {
-  var now = new Date();
-  var result;
+  return new Promise(function(resolve, reject) {
+    var now = new Date();
+    var result;
 
-  result = xml;
-  result = result.replace('{LATITUDE}', _generateLatitude());
-  result = result.replace('{LONGITUDE}', _generateLongitude());
-  result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
-  result = result.replace('{TOKEN}', _generateToken(plate));
-  result = result.replace('{PLATE}', plate);
-  result = result.replace('{UUID}', uuidv4());
-
-  return result;
+    result = xml;
+    result = result.replace('{LATITUDE}', _generateLatitude());
+    result = result.replace('{LONGITUDE}', _generateLongitude());
+    result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
+    result = result.replace('{TOKEN}', _generateToken(plate));
+    result = result.replace('{PLATE}', plate);
+    result = result.replace('{UUID}', uuidv4());
+    resolve(result);
+  });
 }
 
 function _request(body) {
