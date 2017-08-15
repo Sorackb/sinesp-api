@@ -8,8 +8,8 @@ var request = require('request');
 var xml2js  = require('xml2js');
 var xml;
 
-const PLATE_FORMAT = /^[a-z]{3}\d{4}$/gim;
-const SPECIAL      = /[^a-zA-Z\d]/gi;
+const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
+const SPECIAL      = /[^a-zA-Z0-9]/gi;
 const URL          = 'https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v2';
 const SECRET       = 'XvAmRTGhQchFwzwduKYK';
 const HEADERS      = {
