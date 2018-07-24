@@ -1,17 +1,18 @@
 var definition = {};
 
-var moment  = require('moment');
-var uuidv4  = require('uuid/v4');
-var crypto  = require('crypto');
-var fs      = require('fs');
-var request = require('request');
-var xml2js  = require('xml2js');
-var xml;
+const moment  = require('moment');
+const uuidv4  = require('uuid/v4');
+const crypto  = require('crypto');
+const fs = require('fs');
+const request = require('request');
+const xml2js  = require('xml2js');
+
+let xml;
 
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
 const SPECIAL      = /[^a-zA-Z0-9]/gi;
-const URL          = 'https://sinespcidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v2';
-const SECRET       = 'XvAmRTGhQchFwzwduKYK';
+const URL          = 'https://cidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v4';
+const SECRET       = '#8.1.0#g8LzUadkEHs7mbRqbX5l';
 const HEADERS      = {
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
   'Host': 'sinespcidadao.sinesp.gov.br'
