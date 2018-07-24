@@ -27,8 +27,7 @@ function _init() {
 }
 
 async function _search(plate) {
-  let valid = await _validate(plate);
-  let body  = await _generateBody(valid);
+  let body  = await _generateBody(plate);
 
   return _request(body);
 }
@@ -44,19 +43,20 @@ async function _validate(plate) {
 }
 
 async function _generateBody(plate) {
-  let now       = new Date();
-  let result    = xml;
+  let now                          = new Date();
+  let result                       = xml;
+  let valid                        = await _validate(plate);
   let [latitude, longitude, token] = await Promise.all([
     _generateLatitude(),
     _generateLongitude(),
-    _generateToken(plate)
+    _generateToken(valid)
   ]);
 
   result = result.replace('{LATITUDE}', latitude);
   result = result.replace('{LONGITUDE}', longitude);
   result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
   result = result.replace('{TOKEN}', token);
-  result = result.replace('{PLATE}', plate);
+  result = result.replace('{PLATE}', valid);
 
   return result;
 }
@@ -74,13 +74,12 @@ async function _request(body) {
 }
 
 async function normalize(returnedXML) {
-  let envelope = await new Promise((resolve, reject) => xml2js.parseString(returnedXML, (err, json) => {
+  let {['soap:Envelope']: {['soap:Body']: {[0]: {['ns2:getStatusResponse']: {[0]: {return: {[0]: envelope}}}}}}} = await new Promise((resolve, reject) => xml2js.parseString(returnedXML, (err, json) => {
     if (err) reject(err);
     else resolve(json);
   }));
-  let result   = {};
 
-  envelope = envelope['soap:Envelope']['soap:Body'][0]['ns2:getStatusResponse'][0].return[0];
+  let result = {};
 
   for (let key in envelope) {
     if (envelope.hasOwnProperty(key)) result[key] = envelope[key][0];
