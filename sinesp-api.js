@@ -46,16 +46,16 @@ async function _validate(plate) {
 async function _generateBody(plate) {
   let now       = new Date();
   let result    = xml;
-  let variables = await Promise.all([
+  let [latitude, longitude, token] = await Promise.all([
     _generateLatitude(),
     _generateLongitude(),
     _generateToken(plate)
   ]);
 
-  result = result.replace('{LATITUDE}', variables[0]);
-  result = result.replace('{LONGITUDE}', variables[1]);
+  result = result.replace('{LATITUDE}', latitude);
+  result = result.replace('{LONGITUDE}', longitude);
   result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
-  result = result.replace('{TOKEN}', variables[2]);
+  result = result.replace('{TOKEN}', token);
   result = result.replace('{PLATE}', plate);
 
   return result;
