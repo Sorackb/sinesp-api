@@ -1,13 +1,8 @@
-var definition = {};
-
-const moment  = require('moment');
-const uuidv4  = require('uuid/v4');
-const crypto  = require('crypto');
-const fs = require('fs');
-const request = require('request');
-const xml2js  = require('xml2js');
-
-let xml;
+const moment = require('moment');
+const crypto = require('crypto');
+const fs     = require('fs');
+const axios  = require('axios');
+const xml2js = require('xml2js');
 
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
 const SPECIAL      = /[^a-zA-Z0-9]/gi;
@@ -15,8 +10,11 @@ const URL          = 'https://cidadao.sinesp.gov.br/sinesp-cidadao/mobile/consul
 const SECRET       = '#8.1.0#g8LzUadkEHs7mbRqbX5l';
 const HEADERS      = {
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
-  'Host': 'sinespcidadao.sinesp.gov.br'
+  'Host': 'cidadao.sinesp.gov.br'
 };
+
+let definition = {};
+let xml;
 
 definition.search = _search;
 
@@ -28,96 +26,79 @@ function _init() {
   xml = fs.readFileSync('./body.xml').toString();
 }
 
-function _search(plate) {
-  return new Promise(function(resolve, reject) {
-    _validate(plate)
-        .then(_generateBody)
-        .then(_request)
-        .then(resolve)
-        .catch(reject);
+async function _search(plate) {
+  let valid = await _validate(plate);
+  let body  = await _generateBody(valid);
+
+  return _request(body);
+}
+
+async function _validate(plate) {
+  plate = plate.replace(SPECIAL, '');
+
+  if (!PLATE_FORMAT.test(plate)) {
+    throw new Error('Formato de placa inválido! Utilize o formato "AAA999" ou "AAA-9999".');
+  }
+
+  return plate;
+}
+
+async function _generateBody(plate) {
+  let now       = new Date();
+  let result    = xml;
+  let variables = await Promise.all([
+    _generateLatitude(),
+    _generateLongitude(),
+    _generateToken(plate)
+  ]);
+
+  result = result.replace('{LATITUDE}', variables[0]);
+  result = result.replace('{LONGITUDE}', variables[1]);
+  result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
+  result = result.replace('{TOKEN}', variables[2]);
+  result = result.replace('{PLATE}', plate);
+
+  return result;
+}
+
+async function _request(body) {
+  let {data} = await axios({
+    method: 'POST',
+    url: URL,
+    data: body,
+    encoding: 'binary',
+    headers: HEADERS
   });
+
+  return await normalize(data);
 }
 
-function _validate(plate) {
-  return new Promise(function(resolve, reject) {
-    plate = plate.replace(SPECIAL, '');
+async function normalize(returnedXML) {
+  let envelope = await new Promise((resolve, reject) => xml2js.parseString(returnedXML, (err, json) => {
+    if (err) reject(err);
+    else resolve(json);
+  }));
+  let result   = {};
 
-    if (PLATE_FORMAT.test(plate)) {
-      resolve(plate);
-    } else {
-      reject('Formato de placa inválido! Utilize o formato "AAA999" ou "AAA-9999".');
-    }
-  });
+  envelope = envelope['soap:Envelope']['soap:Body'][0]['ns2:getStatusResponse'][0].return[0];
+
+  for (let key in envelope) {
+    if (envelope.hasOwnProperty(key)) result[key] = envelope[key][0];
+  }
+
+  return result;
 }
 
-function _generateBody(plate) {
-  return new Promise(function(resolve, reject) {
-    var now = new Date();
-    var result;
+async function _generateToken(plate) {
+  let created = crypto.createHmac('sha1', plate + SECRET);
 
-    result = xml;
-    result = result.replace('{LATITUDE}', _generateLatitude());
-    result = result.replace('{LONGITUDE}', _generateLongitude());
-    result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
-    result = result.replace('{TOKEN}', _generateToken(plate));
-    result = result.replace('{PLATE}', plate);
-    result = result.replace('{UUID}', uuidv4());
-    resolve(result);
-  });
+  created.update(plate);
+
+  return created.digest('hex');
 }
 
-function _request(body) {
-  return new Promise(function(resolve, reject) {
-    request.post({
-      url: URL,
-      body: body,
-      rejectUnauthorized: false,
-      encoding: 'binary',
-      headers: HEADERS
-    }, function(error, response, result) {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      normalize(result)
-          .then(resolve)
-          .catch(reject);
-    });
-  });
-}
-
-function normalize(returnedXML) {
-  return new Promise(function(resolve, reject) {
-    var result = {};
-
-    xml2js.parseString(returnedXML, function(err, json) {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      json = json['soap:Envelope']['soap:Body'][0]['ns2:getStatusResponse'][0].return[0];
-
-      for (var key in json) {
-        result[key] = json[key][0];
-      }
-
-      resolve(result);
-    });
-  });
-}
-
-function _generateToken(plate) {
-  var hmac = crypto.createHmac('sha1', plate + SECRET);
-
-  hmac.update(plate);
-
-  return hmac.digest('hex');
-}
-
-function _generateCoordinate() {
-  var seed;
+async function _generateCoordinate() {
+  let seed;
 
   seed = 2000 / Math.sqrt(Math.random());
   seed = seed * Math.sin(2 * 3.141592654 * Math.random());
@@ -125,10 +106,10 @@ function _generateCoordinate() {
   return seed;
 }
 
-function _generateLatitude() {
-  return _generateCoordinate() - 38.5290245;
+async function _generateLatitude() {
+  return await _generateCoordinate() - 38.5290245;
 }
 
-function _generateLongitude() {
-  return _generateCoordinate() - 3.7506985;
+async function _generateLongitude() {
+  return await _generateCoordinate() - 3.7506985;
 }

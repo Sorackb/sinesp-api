@@ -22,10 +22,9 @@
   },
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "crypto": "0.0.3",
     "moment": "^2.18.1",
-    "request": "^2.81.0",
-    "uuid": "^3.1.0",
     "xml2js": "^0.4.17"
   }
 }
