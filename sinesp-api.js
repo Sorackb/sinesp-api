@@ -23,7 +23,7 @@ module.exports = definition;
 _init();
 
 function _init() {
-  xml = fs.readFileSync('./body.xml').toString();
+  xml = fs.readFileSync(__dirname, 'body.xml').toString();
 }
 
 async function _search(plate) {
