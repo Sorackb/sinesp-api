@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const fs     = require('fs');
 const axios  = require('axios');
 const xml2js = require('xml2js');
+const path   = require('path');
 
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
 const SPECIAL      = /[^a-zA-Z0-9]/gi;
@@ -23,7 +24,7 @@ module.exports = definition;
 _init();
 
 function _init() {
-  xml = fs.readFileSync(__dirname, 'body.xml').toString();
+  xml = fs.readFileSync(path.join(__dirname, 'body.xml')).toString();
 }
 
 async function _search(plate) {
