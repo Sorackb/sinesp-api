@@ -1,6 +1,6 @@
 {
   "name": "sinesp-api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
   "main": "sinesp-api.js",
   "scripts": {
@@ -23,7 +23,6 @@
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
     "axios": "^0.18.0",
-    "crypto": "0.0.3",
     "moment": "^2.18.1",
     "xml2js": "^0.4.17"
   }
