@@ -9,26 +9,20 @@ const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
 const SPECIAL      = /[^a-zA-Z0-9]/gi;
 const URL          = 'https://cidadao.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v4';
 const SECRET       = '#8.1.0#g8LzUadkEHs7mbRqbX5l';
+const XML          = fs.readFileSync(path.join(__dirname, 'body.xml')).toString();
 const HEADERS      = {
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
   'Host': 'cidadao.sinesp.gov.br'
 };
 
 let definition = {};
-let xml;
 
 definition.search = _search;
 
 module.exports = definition;
 
-_init();
-
-function _init() {
-  xml = fs.readFileSync(path.join(__dirname, 'body.xml')).toString();
-}
-
 async function _search(plate) {
-  let body  = await _generateBody(plate);
+  let body = await _generateBody(plate);
 
   return _request(body);
 }
@@ -45,7 +39,7 @@ async function _validate(plate) {
 
 async function _generateBody(plate) {
   let now                          = new Date();
-  let result                       = xml;
+  let result                       = XML;
   let valid                        = await _validate(plate);
   let [latitude, longitude, token] = await Promise.all([
     _generateLatitude(),

@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
     "axios": "^0.18.0",
-    "moment": "^2.18.1",
-    "xml2js": "^0.4.17"
+    "moment": "^2.22.2",
+    "xml2js": "^0.4.19"
   }
 }
