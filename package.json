@@ -1,6 +1,6 @@
 {
   "name": "sinesp-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
   "main": "sinesp-api.js",
   "scripts": {
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^5.2.0"
   }
 }

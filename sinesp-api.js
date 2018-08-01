@@ -1,9 +1,10 @@
-const moment = require('moment');
-const crypto = require('crypto');
-const fs     = require('fs');
-const axios  = require('axios');
-const xml2js = require('xml2js');
-const path   = require('path');
+const moment       = require('moment');
+const fs           = require('fs');
+const axios        = require('axios');
+const xml2js       = require('xml2js');
+const path         = require('path');
+const {createHmac} = require('crypto');
+
 
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
 const SPECIAL      = /[^a-zA-Z0-9]/gi;
@@ -11,6 +12,7 @@ const URL          = 'https://cidadao.sinesp.gov.br/sinesp-cidadao/mobile/consul
 const SECRET       = '#8.1.0#g8LzUadkEHs7mbRqbX5l';
 const XML          = fs.readFileSync(path.join(__dirname, 'body.xml')).toString();
 const HEADERS      = {
+  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
   'Host': 'cidadao.sinesp.gov.br'
 };
@@ -80,11 +82,15 @@ async function normalize(returnedXML) {
     if (envelope.hasOwnProperty(key)) result[key] = envelope[key][0];
   }
 
+  if (Number(envelope.codigoRetorno) !== 0) {
+    throw Error(envelope.mensagemRetorno);
+  }
+
   return result;
 }
 
 async function _generateToken(plate) {
-  let created = crypto.createHmac('sha1', plate + SECRET);
+  let created = createHmac('sha1', plate + SECRET);
 
   created.update(plate);
 
