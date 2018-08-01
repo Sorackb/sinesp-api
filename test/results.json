@@ -1,0 +1,20 @@
+{
+  "ABC1234": {
+    "codigoRetorno": "0",
+    "mensagemRetorno": "Sem erros.",
+    "codigoSituacao": "0",
+    "situacao": "Sem restri��o",
+    "modelo": "FIAT/UNO MILLE EP",
+    "marca": "FIAT/UNO MILLE EP",
+    "cor": "BRANCA",
+    "ano": "1996",
+    "anoModelo": "1996",
+    "placa": "ABC1234",
+    "uf": "DF",
+    "municipio": "BRASILIA",
+    "chassi": "99092",
+    "dataAtualizacaoCaracteristicasVeiculo": "13/04/2018",
+    "dataAtualizacaoRouboFurto": "30/07/2018",
+    "dataAtualizacaoAlarme": "30/07/2018"
+  }
+}
