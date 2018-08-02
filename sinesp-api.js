@@ -33,8 +33,8 @@ const SECRET          = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
  *
  * @type {RegExp}
  */
-const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/gim;
-const SPECIAL      = /[^a-zA-Z0-9]/gi;
+const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/im;
+const SPECIAL      = /[^a-zA-Z0-9]/i;
 
 const XML     = readFileSync(join(__dirname, 'body.xml')).toString();
 const HEADERS = {
@@ -57,7 +57,7 @@ module.exports = {search};
  * @returns {Promise<*>} Represents the vehicle identified by the plate
  */
 async function search(plate) {
-  let body = await _generateBody(plate);
+  let body = await _generateBody(plate || '');
 
   return _request(body);
 }
@@ -74,7 +74,7 @@ async function _validate(plate) {
   plate = plate.replace(SPECIAL, '');
 
   if (!PLATE_FORMAT.test(plate)) {
-    throw new Error('Formato de placa inválido! Utilize o formato "AAA999" ou "AAA-9999".');
+    throw new Error('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".');
   }
 
   return plate;
