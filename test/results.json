@@ -12,9 +12,6 @@
     "placa": "ABC1234",
     "uf": "DF",
     "municipio": "BRASILIA",
-    "chassi": "99092",
-    "dataAtualizacaoCaracteristicasVeiculo": "13/04/2018",
-    "dataAtualizacaoRouboFurto": "30/07/2018",
-    "dataAtualizacaoAlarme": "30/07/2018"
+    "chassi": "99092"
   }
 }
