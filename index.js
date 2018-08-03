@@ -7,22 +7,20 @@
  * @requires NPM:axios
  */
 
-const {readFileSync} = require('fs');
-const {join}         = require('path');
-const {createHmac}   = require('crypto');
-const {promisify}    = require('util');
+const { createHmac } = require('crypto');
+const { promisify } = require('util');
 
-const {parseString} = require('xml2js');
-const axios         = require('axios');
+const { parseString, Builder } = require('xml2js');
+const axios = require('axios');
 
-const _parseString = promisify(parseString);
+const promisedParseString = promisify(parseString);
 
-const HOST            = 'cidadao.sinesp.gov.br';
+const HOST = 'cidadao.sinesp.gov.br';
 const SERVICE_VERSION = 'v4';
-const URL             = `https://${HOST}/sinesp-cidadao/mobile/consultar-placa/${SERVICE_VERSION}`;
+const URL = `https://${HOST}/sinesp-cidadao/mobile/consultar-placa/${SERVICE_VERSION}`;
 
 const ANDROID_VERSION = '8.1.0';
-const SECRET          = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
+const SECRET = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
 
 /**
  * The accepted format: AAA0000
@@ -32,33 +30,13 @@ const SECRET          = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
  * @type {RegExp}
  */
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/im;
-const SPECIAL      = /[^a-zA-Z0-9]/i;
+const SPECIAL = /[^a-zA-Z0-9]/i;
 
-const XML     = readFileSync(join(__dirname, 'body.xml')).toString();
 const HEADERS = {
   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
   'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
-  'Host': HOST
+  Host: HOST
 };
-
-module.exports = {search};
-
-/**
- * Searches a Vehicle by plate
- *
- * @example
- * // 'vehicle' is set to the response object
- * let vehicle = await search('AAA111');
- *
- * @param {string} plate - The plate of the vehicle to be searched
- *
- * @returns {Promise<*>} Represents the vehicle identified by the plate
- */
-async function search(plate) {
-  let body = await _generateBody(plate || '');
-
-  return _request(body);
-}
 
 /**
  * Validate the format of the plate informed
@@ -66,67 +44,17 @@ async function search(plate) {
  * @param {string} plate - The informed plate
  *
  * @returns {Promise<*>} Represents the plate without special characters
+ *
  * @private
  */
-async function _validate(plate) {
-  plate = plate.replace(SPECIAL, '');
+async function validate(plate) {
+  const usedPlate = plate.replace(SPECIAL, '');
 
-  if (!PLATE_FORMAT.test(plate)) {
+  if (!PLATE_FORMAT.test(usedPlate)) {
     throw new Error('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".');
   }
 
-  return plate;
-}
-
-/**
- * Generates the XML body in the format expected by the SINESP's service
- *
- * @param {string} plate - Treated and informed plate
- *
- * @returns {Promise<string>} Represents the filled XML to be sent
- * @private
- */
-async function _generateBody(plate) {
-  let now    = new Date();
-  let result = XML;
-  let valid  = await _validate(plate);
-
-  let [latitude, longitude, token, date] = await Promise.all([
-    _generateLatitude(),
-    _generateLongitude(),
-    _generateToken(valid),
-    _formatDate(now)
-  ]);
-
-  result = result.replace('{ANDROID_VERSION', ANDROID_VERSION);
-  result = result.replace('{LATITUDE}', latitude);
-  result = result.replace('{LONGITUDE}', longitude);
-  result = result.replace('{DATE}', date);
-  result = result.replace('{TOKEN}', token);
-  result = result.replace('{PLATE}', valid);
-
-  return result;
-}
-
-/**
- * Send the request to SINESP's 'search by plate' service
- *
- * @param {string} body - The XML expected by SINESP's service
- *
- * @returns {Promise<*>} Represents the JSON filled with the SINESP's service response
- *
- * @private
- */
-async function _request(body) {
-  let {data} = await axios({
-    method: 'POST',
-    url: URL,
-    data: body,
-    encoding: 'binary',
-    headers: HEADERS
-  });
-
-  return await _normalize(data);
+  return usedPlate;
 }
 
 /**
@@ -138,20 +66,14 @@ async function _request(body) {
  *
  * @private
  */
-async function _normalize(returnedXML) {
-  const {'soap:Envelope': {'soap:Body': {'ns2:getStatusResponse': {return: envelope}}}} = await _parseString(returnedXML, {explicitArray: false});
+async function normalize(returnedXML) {
+  const { 'soap:Envelope': { 'soap:Body': { 'ns2:getStatusResponse': { return: envelope } } } } = await promisedParseString(returnedXML, { explicitArray: false });
 
-  let result = {};
-
-  for (let key in envelope) {
-    if (envelope.hasOwnProperty(key)) result[key] = envelope[key];
-  }
-
-  if (Number(envelope.codigoRetorno) !== 0) {
+  if (parseInt(envelope.codigoRetorno, 10) !== 0) {
     throw Error(envelope.mensagemRetorno);
   }
 
-  return result;
+  return envelope;
 }
 
 /**
@@ -163,8 +85,8 @@ async function _normalize(returnedXML) {
  *
  * @private
  */
-async function _generateToken(plate) {
-  let created = createHmac('sha1', `${plate}${SECRET}`);
+async function generateToken(plate) {
+  const created = createHmac('sha1', `${plate}${SECRET}`);
 
   created.update(plate);
 
@@ -178,11 +100,11 @@ async function _generateToken(plate) {
  *
  * @private
  */
-async function _generateCoordinate() {
+async function generateCoordinate() {
   let seed;
 
   seed = 2000 / Math.sqrt(Math.random());
-  seed = seed * Math.sin(2 * 3.141592654 * Math.random());
+  seed *= Math.sin(2 * 3.141592654 * Math.random());
 
   return seed;
 }
@@ -194,8 +116,8 @@ async function _generateCoordinate() {
  *
  * @private
  */
-async function _generateLatitude() {
-  return await _generateCoordinate() - 38.5290245;
+async function generateLatitude() {
+  return await generateCoordinate() - 38.5290245;
 }
 
 /**
@@ -205,8 +127,8 @@ async function _generateLatitude() {
  *
  * @private
  */
-async function _generateLongitude() {
-  return await _generateCoordinate() - 3.7506985;
+async function generateLongitude() {
+  return await generateCoordinate() - 3.7506985;
 }
 
 /**
@@ -215,15 +137,107 @@ async function _generateLongitude() {
  * @param {Date} date - The date to be formatted
  *
  * @returns {Promise<string>} Represents the formatted date
+ *
  * @private
  */
-async function _formatDate(date) {
-  const year   = date.getFullYear();
-  const month  = ('00' + (date.getMonth() + 1)).slice(-2);
-  const day    = ('00' + date.getDate()).slice(-2);
-  const hour   = ('00' + date.getHours()).slice(-2);
-  const minute = ('00' + date.getMinutes()).slice(-2);
-  const second = ('00' + date.getSeconds()).slice(-2);
+async function formatDate(date) {
+  const year = date.getFullYear();
+  const month = (`00${date.getMonth() + 1}`).slice(-2);
+  const day = (`00${date.getDate()}`).slice(-2);
+  const hour = (`00${date.getHours()}`).slice(-2);
+  const minute = (`00${date.getMinutes()}`).slice(-2);
+  const second = (`00${date.getSeconds()}`).slice(-2);
 
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
+
+/**
+ * Send the request to SINESP's 'search by plate' service
+ *
+ * @param {string} body - The XML expected by SINESP's service
+ *
+ * @returns {Promise<*>} Represents the JSON filled with the SINESP's service response
+ *
+ * @private
+ */
+async function request(body) {
+  const { data } = await axios({
+    method: 'POST',
+    url: URL,
+    data: body,
+    encoding: 'binary',
+    headers: HEADERS,
+  });
+
+  return normalize(data);
+}
+
+/**
+ * Generates the XML body in the format expected by the SINESP's service
+ *
+ * @param {string} plate - Treated and informed plate
+ *
+ * @returns {Promise<string>} Represents the filled XML to be sent
+ *
+ * @private
+ */
+async function generateBody(plate) {
+  const builder = new Builder({ rootName: 'v:Envelope' });
+  const usedPlate = await validate(plate);
+
+  const [latitude, longitude, token, date] = await Promise.all([
+    generateLatitude(),
+    generateLongitude(),
+    generateToken(usedPlate),
+    formatDate(new Date()),
+  ]);
+
+  const body = {
+    $: {
+      'xmlns:v': 'http://schemas.xmlsoap.org/soap/envelope/',
+    },
+    'v:Header': {
+      b: 'LGE Nexus 5',
+      j: '',
+      i: latitude,
+      c: 'ANDROID',
+      d: ANDROID_VERSION,
+      e: '4.1.5',
+      f: '127.0.0.1',
+      g: token,
+      k: '',
+      h: longitude,
+      l: date,
+      m: '8797e74f0d6eb7b1ff3dc114d4aa12d3',
+    },
+    'v:Body': {
+      $: {
+        'xmlns:n0': 'http://soap.ws.placa.service.sinesp.serpro.gov.br/',
+      },
+      'n0:getStatus': {
+        a: plate,
+      }
+    }
+  };
+
+  return builder.buildObject(body);
+}
+
+/**
+ * Searches a Vehicle by plate
+ *
+ * @example
+ * // 'vehicle' is set to the response object
+ * let vehicle = await search('AAA111');
+ *
+ * @param {string} plate - The plate of the vehicle to be searched
+ *
+ * @returns {Promise<*>} Represents the vehicle identified by the plate
+ */
+async function search(plate = '') {
+  const body = await generateBody(plate);
+
+  return request(body);
+}
+
+module.exports = { search };
