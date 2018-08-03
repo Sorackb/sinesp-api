@@ -1,4 +1,4 @@
-const {search}       = require('../sinesp-api');
+const {search}       = require('../.');
 const chai           = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const {join}         = require('path');
@@ -8,11 +8,9 @@ chai.use(chaiAsPromised);
 const expect  = chai.expect;
 const RESULTS = require(join(__dirname, 'results.json'));
 
-const PLATES_TO_TEST = ['ABC1234', 'AAA1111', 'MUT6002', 'MVO4619', 'HTH7061', 'NEV5230', 'HZD6312'];
-
 describe('search', function() {
   /** Success tests **/
-  for (let plate of PLATES_TO_TEST) {
+  for (let plate of Object.keys(RESULTS)) {
     it(`Success: ${plate}`, async function() {
       let vehicle = await search(plate);
 

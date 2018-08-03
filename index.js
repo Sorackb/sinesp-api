@@ -3,9 +3,8 @@
  *
  * @author Lucas Bernardo
  *
- * @requires NPM:moment
- * @requires NPM:axios
  * @requires NPM:xml2js
+ * @requires NPM:axios
  */
 
 const {readFileSync} = require('fs');
@@ -14,7 +13,6 @@ const {createHmac}   = require('crypto');
 const {promisify}    = require('util');
 
 const {parseString} = require('xml2js');
-const moment        = require('moment');
 const axios         = require('axios');
 
 const _parseString = promisify(parseString);
@@ -89,19 +87,21 @@ async function _validate(plate) {
  * @private
  */
 async function _generateBody(plate) {
-  let now                          = new Date();
-  let result                       = XML;
-  let valid                        = await _validate(plate);
-  let [latitude, longitude, token] = await Promise.all([
+  let now    = new Date();
+  let result = XML;
+  let valid  = await _validate(plate);
+
+  let [latitude, longitude, token, date] = await Promise.all([
     _generateLatitude(),
     _generateLongitude(),
-    _generateToken(valid)
+    _generateToken(valid),
+    _formatDate(now)
   ]);
 
   result = result.replace('{ANDROID_VERSION', ANDROID_VERSION);
   result = result.replace('{LATITUDE}', latitude);
   result = result.replace('{LONGITUDE}', longitude);
-  result = result.replace('{DATE}', moment(now).format('YYYY-MM-DD HH:mm:ss'));
+  result = result.replace('{DATE}', date);
   result = result.replace('{TOKEN}', token);
   result = result.replace('{PLATE}', valid);
 
@@ -207,4 +207,23 @@ async function _generateLatitude() {
  */
 async function _generateLongitude() {
   return await _generateCoordinate() - 3.7506985;
+}
+
+/**
+ * Generates the date formatted by 'YYYY-MM-DD HH:mm:ss'
+ *
+ * @param {Date} date - The date to be formatted
+ *
+ * @returns {Promise<string>} Represents the formatted date
+ * @private
+ */
+async function _formatDate(date) {
+  const year   = date.getFullYear();
+  const month  = ('00' + (date.getMonth() + 1)).slice(-2);
+  const day    = ('00' + date.getDate()).slice(-2);
+  const hour   = ('00' + date.getHours()).slice(-2);
+  const minute = ('00' + date.getMinutes()).slice(-2);
+  const second = ('00' + date.getSeconds()).slice(-2);
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }

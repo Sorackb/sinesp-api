@@ -18,9 +18,9 @@ $ npm install sinesp-api -save
 
 Para consultar utilize a função `search` enviando a placa desejada como parâmetro.
 
-| Nome        | Tipo   | Requerido | Descrição        |
-| ----------- | :----: | :-------: | ---------------- |
-| plate       | string | Sim       | Placa do veículo |
+| Nome        | Tipo     | Requerido | Descrição        |
+| ----------- | :------: | :-------: | ---------------- |
+| `plate`     | *string* | Sim       | Placa do veículo |
 
 ### Exemplo de utilização
 
