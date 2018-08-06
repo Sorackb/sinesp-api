@@ -9,18 +9,12 @@
 
 const { createHmac } = require('crypto');
 const { promisify } = require('util');
+const { Agent } = require('https');
 
 const { parseString, Builder } = require('xml2js');
 const axios = require('axios');
 
 const promisedParseString = promisify(parseString);
-
-const HOST = 'cidadao.sinesp.gov.br';
-const SERVICE_VERSION = 'v4';
-const URL = `https://${HOST}/sinesp-cidadao/mobile/consultar-placa/${SERVICE_VERSION}`;
-
-const ANDROID_VERSION = '8.1.0';
-const SECRET = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
 
 /**
  * The accepted format: AAA0000
@@ -32,10 +26,12 @@ const SECRET = `#${ANDROID_VERSION}#g8LzUadkEHs7mbRqbX5l`;
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/im;
 const SPECIAL = /[^a-zA-Z0-9]/i;
 
-const HEADERS = {
-  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-  'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
-  Host: HOST
+let opts = {
+  host: 'cidadao.sinesp.gov.br',
+  endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
+  serviceVersion: 'v4',
+  androidVersion: '8.1.0',
+  proxy: {},
 };
 
 /**
@@ -47,7 +43,7 @@ const HEADERS = {
  *
  * @private
  */
-async function validate(plate) {
+const validate = async (plate) => {
   const usedPlate = plate.replace(SPECIAL, '');
 
   if (!PLATE_FORMAT.test(usedPlate)) {
@@ -55,7 +51,7 @@ async function validate(plate) {
   }
 
   return usedPlate;
-}
+};
 
 /**
  * Transforms the answered XML in a JSON
@@ -66,7 +62,7 @@ async function validate(plate) {
  *
  * @private
  */
-async function normalize(returnedXML) {
+const normalize = async (returnedXML) => {
   const { 'soap:Envelope': { 'soap:Body': { 'ns2:getStatusResponse': { return: envelope } } } } = await promisedParseString(returnedXML, { explicitArray: false });
 
   if (parseInt(envelope.codigoRetorno, 10) !== 0) {
@@ -74,7 +70,7 @@ async function normalize(returnedXML) {
   }
 
   return envelope;
-}
+};
 
 /**
  * Create the token using 'SHA-1' algoritm based on the plate and the secret
@@ -85,13 +81,13 @@ async function normalize(returnedXML) {
  *
  * @private
  */
-async function generateToken(plate) {
-  const created = createHmac('sha1', `${plate}${SECRET}`);
+const generateToken = async (plate) => {
+  const secret = `#${opts.androidVersion}#g8LzUadkEHs7mbRqbX5l`;
 
-  created.update(plate);
-
-  return created.digest('hex');
-}
+  return createHmac('sha1', `${plate}${secret}`)
+    .update(plate)
+    .digest('hex');
+};
 
 /**
  * Generates the coordinates used in the request
@@ -100,14 +96,14 @@ async function generateToken(plate) {
  *
  * @private
  */
-async function generateCoordinate() {
+const generateCoordinate = async () => {
   let seed;
 
   seed = 2000 / Math.sqrt(Math.random());
   seed *= Math.sin(2 * 3.141592654 * Math.random());
 
   return seed;
-}
+};
 
 /**
  * Generates a random latitude
@@ -116,9 +112,7 @@ async function generateCoordinate() {
  *
  * @private
  */
-async function generateLatitude() {
-  return await generateCoordinate() - 38.5290245;
-}
+const generateLatitude = async () => await generateCoordinate() - 38.5290245;
 
 /**
  * Generates a random longitude
@@ -127,9 +121,7 @@ async function generateLatitude() {
  *
  * @private
  */
-async function generateLongitude() {
-  return await generateCoordinate() - 3.7506985;
-}
+const generateLongitude = async () => await generateCoordinate() - 3.7506985;
 
 /**
  * Generates the date formatted by 'YYYY-MM-DD HH:mm:ss'
@@ -140,7 +132,7 @@ async function generateLongitude() {
  *
  * @private
  */
-async function formatDate(date) {
+const formatDate = async (date) => {
   const year = date.getFullYear();
   const month = (`00${date.getMonth() + 1}`).slice(-2);
   const day = (`00${date.getDate()}`).slice(-2);
@@ -149,28 +141,44 @@ async function formatDate(date) {
   const second = (`00${date.getSeconds()}`).slice(-2);
 
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-}
+};
 
 /**
  * Send the request to SINESP's 'search by plate' service
  *
- * @param {string} body - The XML expected by SINESP's service
+ * @param {string} data - The XML expected by SINESP's service
  *
  * @returns {Promise<*>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
-async function request(body) {
-  const { data } = await axios({
-    method: 'POST',
-    url: URL,
-    data: body,
-    encoding: 'binary',
-    headers: HEADERS,
+const request = async (data) => {
+  const url = `https://${opts.host}${opts.endpoint}${opts.serviceVersion}`;
+
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
+    Host: opts.host
+  };
+
+  const agent = new Agent({
+    host: opts.proxy.host,
+    port: opts.proxy.port,
+    path: '/',
+    rejectUnauthorized: false,
   });
 
-  return normalize(data);
-}
+  const { data: response } = await axios({
+    url,
+    data,
+    headers,
+    agent,
+    method: 'POST',
+    encoding: 'binary',
+  });
+
+  return normalize(response);
+};
 
 /**
  * Generates the XML body in the format expected by the SINESP's service
@@ -181,7 +189,7 @@ async function request(body) {
  *
  * @private
  */
-async function generateBody(plate) {
+const generateBody = async (plate) => {
   const builder = new Builder({ rootName: 'v:Envelope' });
   const usedPlate = await validate(plate);
 
@@ -198,15 +206,15 @@ async function generateBody(plate) {
     },
     'v:Header': {
       b: 'LGE Nexus 5',
-      j: '',
-      i: latitude,
       c: 'ANDROID',
-      d: ANDROID_VERSION,
-      e: '4.1.5',
+      d: opts.androidVersion,
+      e: '4.3.2',
       f: '127.0.0.1',
       g: token,
-      k: '',
       h: longitude,
+      i: latitude,
+      j: '',
+      k: '',
       l: date,
       m: '8797e74f0d6eb7b1ff3dc114d4aa12d3',
     },
@@ -221,7 +229,7 @@ async function generateBody(plate) {
   };
 
   return builder.buildObject(body);
-}
+};
 
 /**
  * Searches a Vehicle by plate
@@ -234,10 +242,34 @@ async function generateBody(plate) {
  *
  * @returns {Promise<*>} Represents the vehicle identified by the plate
  */
-async function search(plate = '') {
+const search = async (plate = '') => {
   const body = await generateBody(plate);
 
   return request(body);
-}
+};
 
-module.exports = { search };
+const configure = ({
+  host,
+  serviceVersion,
+  androidVersion,
+  endpoint,
+  proxy = {},
+} = {}) => {
+  opts = {
+    host: host || opts.host,
+    endpoint: endpoint || opts.endpoint,
+    serviceVersion: serviceVersion || opts.serviceVersion,
+    androidVersion: androidVersion || opts.serviceVersion,
+    proxy: {
+      host: proxy.host || opts.proxy.host,
+      port: proxy.port || opts.proxy.port,
+    },
+  };
+
+  return { search };
+};
+
+module.exports = {
+  configure,
+  search
+};

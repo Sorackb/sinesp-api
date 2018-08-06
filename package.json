@@ -1,6 +1,6 @@
 {
   "name": "sinesp-api",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
   "main": "index.js",
   "engines": {
@@ -19,7 +19,7 @@
     "placa",
     "veiculo"
   ],
-  "author": "Lucas Souza <sorackb@gmail.com>",
+  "author": "Lucas Souza <sorackb@gmail.com> (http://lucassouza.org)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Sorackb/sinesp-api/issues"

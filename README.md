@@ -9,7 +9,7 @@ Módulo do Node.js que permite a consulta de placa no território nacional utili
 ## Instalação
 
 ```
-$ npm install sinesp-api -save
+$ npm install sinesp-api --save
 ```
 
 ## API
@@ -25,11 +25,9 @@ Para consultar utilize a função `search` enviando a placa desejada como parâm
 ### Exemplo de utilização
 
 ```js
-const {search} = require('sinesp-api');
+const { search } = require('sinesp-api')();
 
-let veiculo = await search('ABC1234');
-
-console.log(JSON.stringify(veiculo));
+search('ABC1234').then(veiculo => console.log(JSON.stringify(veiculo)));
 ```
 
 ### Saída
