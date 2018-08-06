@@ -34,18 +34,44 @@ describe('search', function () {
   it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: not found', async () => expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado'));
+});
+
+describe('search (With Proxy)', function () {
+  const { search } = configure({
+    proxy: {
+      host: '201.149.99.162',
+      port: '3128',
+    }
+  });
+
+  /** Success tests * */
+  Object.keys(results).forEach(function (plate) {
+    it(`Success: ${plate}`, async function () {
+      this.timeout(5000);
+      const vehicle = await search(plate);
+
+      return expect(vehicle)
+        .to.deep.include(results[plate])
+        .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
+    });
+  });
+
+  it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
+  it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
+  it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
+  it('Fail: not found', async () => expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado'));
 
   const { search: searchWithProxy } = configure({
     proxy: {
-      host: '177.184.144.130',
-      port: '8080',
+      host: '201.149.99.162',
+      port: '3128',
     }
   });
 
   /** Success (With Proxy) tests * */
   Object.keys(results).forEach(function (plate) {
     it(`Success (With Proxy): ${plate}`, async function () {
-      this.timeout(5000);
+      this.timeout(35000);
       const vehicle = await searchWithProxy(plate);
 
       return expect(vehicle)

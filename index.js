@@ -4,15 +4,16 @@
  * @author Lucas Bernardo
  *
  * @requires NPM:xml2js
- * @requires NPM:axios
+ * @requires NPM:node-fetch
+ * @requires NPM:https-proxy-agent
  */
 
 const { createHmac } = require('crypto');
 const { promisify } = require('util');
-const { Agent } = require('https');
 
 const { parseString, Builder } = require('xml2js');
-const axios = require('axios');
+const fetch = require('node-fetch');
+const HttpsProxyAgent = require('https-proxy-agent');
 
 const promisedParseString = promisify(parseString);
 
@@ -146,38 +147,35 @@ const formatDate = async (date) => {
 /**
  * Send the request to SINESP's 'search by plate' service
  *
- * @param {string} data - The XML expected by SINESP's service
+ * @param {string} body - The XML expected by SINESP's service
  *
  * @returns {Promise<*>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
-const request = async (data) => {
+const request = async (body) => {
   const url = `https://${opts.host}${opts.endpoint}${opts.serviceVersion}`;
 
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
-    Host: opts.host
+    Host: opts.host,
   };
 
-  const agent = new Agent({
-    host: opts.proxy.host,
-    port: opts.proxy.port,
-    path: '/',
-    rejectUnauthorized: false,
-  });
+  const agent = opts.proxy.host ? new HttpsProxyAgent(`http://${opts.proxy.host}:${opts.proxy.port}`) : null;
 
-  const { data: response } = await axios({
-    url,
-    data,
+  const response = await fetch(url, {
+    body,
     headers,
     agent,
     method: 'POST',
-    encoding: 'binary',
   });
 
-  return normalize(response);
+  if (response.status !== 200) {
+    throw new Error(await response.text());
+  }
+
+  return normalize(await response.text());
 };
 
 /**
