@@ -28,7 +28,7 @@ describe('search', function () {
   /** Success tests * */
   Object.keys(results).forEach(function (plate) {
     it(`Success: ${plate}`, async function () {
-      this.timeout(5000);
+      this.timeout(10000);
       const vehicle = await search(plate);
 
       return expect(vehicle)
@@ -40,7 +40,12 @@ describe('search', function () {
   it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
-  it('Fail: not found', async () => expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado'));
+
+  it('Fail: not found', async function() {
+    this.timeout(10000);
+
+    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
+  });
 });
 
 describe('search (With Proxy)', function () {
@@ -54,7 +59,7 @@ describe('search (With Proxy)', function () {
   /** Success tests * */
   Object.keys(results).forEach(function (plate) {
     it(`Success: ${plate}`, async function () {
-      this.timeout(5000);
+      this.timeout(10000);
       const vehicle = await search(plate);
 
       return expect(vehicle)
@@ -63,5 +68,9 @@ describe('search (With Proxy)', function () {
     });
   });
 
-  it('Fail: not found', async () => expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado'));
+  it('Fail: not found', async function() {
+    this.timeout(10000);
+
+    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
+  });
 });
