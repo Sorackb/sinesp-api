@@ -41,7 +41,7 @@ describe('search', function () {
   it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
 
-  it('Fail: not found', async function() {
+  it('Fail: not found', async function () {
     this.timeout(10000);
 
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
@@ -51,8 +51,8 @@ describe('search', function () {
 describe('search (With Proxy)', function () {
   const { search } = configure({
     proxy: {
-      host: '201.149.99.162',
-      port: '3128',
+      host: process.env.PROXY_HOST || '200.152.100.178',
+      port: process.env.PROXY_PORT || '8080',
     }
   });
 
@@ -68,7 +68,7 @@ describe('search (With Proxy)', function () {
     });
   });
 
-  it('Fail: not found', async function() {
+  it('Fail: not found', async function () {
     this.timeout(10000);
 
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');

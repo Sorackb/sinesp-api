@@ -264,7 +264,10 @@ const configure = ({
     },
   };
 
-  return { search };
+  return {
+    configure,
+    search
+  };
 };
 
 module.exports = {
