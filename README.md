@@ -35,7 +35,7 @@ $ npm install sinesp-api --save
 ## API
 
 <dl>
-<dt><a href="#search">search(plate)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dt><a href="#search">search(plate)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
 <dd><p>Busca o veículo pela placa</p>
 </dd>
 <dt><a href="#configure">configure([host], [endpoint], [serviceVersion], [androidVersion], [proxy])</a> ⇒</dt>
@@ -43,12 +43,12 @@ $ npm install sinesp-api --save
 </dd>
 </dl>
 
-## search(plate) ⇒ <code>Promise.&lt;\*&gt;</code>
+## search(plate) ⇒ <code>Promise.&lt;object&gt;</code>
 Busca o veículo pela placa
 
-**Retorna**: <code>Promise.&lt;\*&gt;</code> - A representação do veículo identificado pela placa
+**Retorna**: <code>Promise.&lt;object&gt;</code> - A representação do veículo identificado pela placa
 
-| Param | Type | Description |
+| Parâmetro | Tipo | Descrição |
 | --- | --- | --- |
 | plate | <code>string</code> | A placa do veículo a ser consultada |
 
@@ -88,7 +88,7 @@ Configura o módulo
 
 **Retorna**: O próprio módulo
 
-| Param | Type | Default | Description |
+| Parâmetro | Tipo | Default | Descrição |
 | --- | --- | --- | --- |
 | [host] | <code>string</code> | <code>&quot;cidadao.sinesp.gov.br&quot;</code> | Host do serviço SINESP |
 | [endpoint] | <code>string</code> | <code>&quot;/sinesp-cidadao/mobile/consultar-placa/&quot;</code> | Endpoint do serviço SINESP |

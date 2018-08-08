@@ -110,12 +110,9 @@ const generateIPAddress = async () => {
  * @private
  */
 const generateCoordinate = async () => {
-  let seed;
+  const seed = 2000 / Math.sqrt(Math.random());
 
-  seed = 2000 / Math.sqrt(Math.random());
-  seed *= Math.sin(2 * 3.141592654 * Math.random());
-
-  return seed;
+  return seed * Math.sin(2 * 3.141592654 * Math.random());
 };
 
 /**
