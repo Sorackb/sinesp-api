@@ -42,7 +42,7 @@ let opts = {
  *
  * @param {string} plate - The informed plate
  *
- * @returns {Promise<*>} Represents the plate without special characters
+ * @returns {Promise<string>} Represents the plate without special characters
  *
  * @private
  */
@@ -61,7 +61,7 @@ const validate = async (plate) => {
  *
  * @param {string} returnedXML - The answered XML
  *
- * @returns {Promise<void>} Represents the JSON filled with the XML response
+ * @returns {Promise<object>} Represents the JSON filled with the XML response
  *
  * @private
  */
@@ -76,20 +76,30 @@ const normalize = async (returnedXML) => {
 };
 
 /**
- * Create the token using 'SHA-1' algoritm based on the plate and the secret
+ * Generates a octet from 1 to 255
  *
- * @param {string} plate - The plate to be searched
- *
- * @returns {Promise<*>} Represents the created token
+ * @returns {Promise<number>} Represents a random octet
  *
  * @private
  */
-const generateToken = async (plate) => {
-  const secret = `#${opts.androidVersion}#${opts.secret}`;
+const generateRandomOctet = async () => (Math.floor(Math.random() * 255) + 1);
 
-  return createHmac('sha1', `${plate}${secret}`)
-    .update(plate)
-    .digest('hex');
+/**
+ * Generates a random IP address
+ *
+ * @returns {Promise<string>} Represents a random IP address
+ *
+ * @private
+ */
+const generateIPAddress = async () => {
+  const [octet1, octet2, octet3, octet4] = await Promise.all([
+    generateRandomOctet(),
+    generateRandomOctet(),
+    generateRandomOctet(),
+    generateRandomOctet(),
+  ]);
+
+  return `${octet1}.${octet2}.${octet3}.${octet4}`;
 };
 
 /**
@@ -127,6 +137,23 @@ const generateLatitude = async () => await generateCoordinate() - 38.5290245;
 const generateLongitude = async () => await generateCoordinate() - 3.7506985;
 
 /**
+ * Create the token using 'SHA-1' algoritm based on the plate and the secret
+ *
+ * @param {string} plate - The plate to be searched
+ *
+ * @returns {Promise<string>} Represents the created token
+ *
+ * @private
+ */
+const generateToken = async (plate) => {
+  const secret = `#${opts.androidVersion}#${opts.secret}`;
+
+  return createHmac('sha1', `${plate}${secret}`)
+    .update(plate)
+    .digest('hex');
+};
+
+/**
  * Generates the date formatted by 'YYYY-MM-DD HH:mm:ss'
  *
  * @param {Date} date - The date to be formatted
@@ -151,7 +178,7 @@ const formatDate = async (date) => {
  *
  * @param {string} body - The XML expected by SINESP's service
  *
- * @returns {Promise<*>} Represents the JSON filled with the SINESP's service response
+ * @returns {Promise<object>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
@@ -190,7 +217,8 @@ const generateBody = async (plate) => {
   const builder = new Builder({ rootName: 'v:Envelope' });
   const usedPlate = await validate(plate);
 
-  const [latitude, longitude, token, date] = await Promise.all([
+  const [ip, latitude, longitude, token, date] = await Promise.all([
+    generateIPAddress(),
     generateLatitude(),
     generateLongitude(),
     generateToken(usedPlate),
@@ -206,7 +234,7 @@ const generateBody = async (plate) => {
       c: 'ANDROID',
       d: opts.androidVersion,
       e: '4.3.2',
-      f: '127.0.0.1',
+      f: ip,
       g: token,
       h: longitude,
       i: latitude,
@@ -237,7 +265,7 @@ const generateBody = async (plate) => {
  *
  * @param {string} plate - The plate of the vehicle to be searched
  *
- * @returns {Promise<*>} Represents the vehicle identified by the plate
+ * @returns {Promise<object>} Represents the vehicle identified by the plate
  */
 const search = async (plate = '') => {
   const body = await generateBody(plate);
