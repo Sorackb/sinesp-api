@@ -32,6 +32,8 @@ let opts = {
   endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
   serviceVersion: 'v4',
   androidVersion: '8.1.0',
+  secret: 'g8LzUadkEHs7mbRqbX5l',
+  timeout: 0,
   proxy: {},
 };
 
@@ -83,7 +85,7 @@ const normalize = async (returnedXML) => {
  * @private
  */
 const generateToken = async (plate) => {
-  const secret = `#${opts.androidVersion}#g8LzUadkEHs7mbRqbX5l`;
+  const secret = `#${opts.androidVersion}#${opts.secret}`;
 
   return createHmac('sha1', `${plate}${secret}`)
     .update(plate)
@@ -169,11 +171,8 @@ const request = async (body) => {
     headers,
     agent,
     method: 'POST',
+    timeout: opts.timeout,
   });
-
-  if (response.status !== 200) {
-    throw new Error(await response.text());
-  }
 
   return normalize(await response.text());
 };
@@ -246,11 +245,26 @@ const search = async (plate = '') => {
   return request(body);
 };
 
+/**
+ * Configure the module
+ *
+ * @param {string} [host=cidadao.sinesp.gov.br] - Host of SINESP service
+ * @param {string} [endpoint=/sinesp-cidadao/mobile/consultar-placa/] - Endpoint of SINESP service
+ * @param {string} [serviceVersion=v4] - Service version of SINESP
+ * @param {string} [androidVersion=8.1.0] - Android version to inform to the SINESP service
+ * @param {string} [secret=g8LzUadkEHs7mbRqbX5l] - The secred used to encrypt the plate
+ * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect. 0 to disable (OS limit applies)
+ * @param {object} [proxy={}] - The proxy object if exists
+ *
+ * @returns The module it self
+ */
 const configure = ({
   host,
   serviceVersion,
   androidVersion,
   endpoint,
+  secret,
+  timeout,
   proxy = {},
 } = {}) => {
   opts = {
@@ -258,6 +272,8 @@ const configure = ({
     endpoint: endpoint || opts.endpoint,
     serviceVersion: serviceVersion || opts.serviceVersion,
     androidVersion: androidVersion || opts.serviceVersion,
+    secret: secret || opts.secret,
+    timeout: timeout || opts.timeout,
     proxy: {
       host: proxy.host || opts.proxy.host,
       port: proxy.port || opts.proxy.port,

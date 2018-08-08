@@ -19,6 +19,7 @@ if (process.env.ONLY_ONE) {
 
 describe('search', function () {
   const { search } = configure({
+    timeout: 0,
     proxy: {
       host: process.env.PROXY_HOST,
       port: process.env.PROXY_PORT,
@@ -40,33 +41,6 @@ describe('search', function () {
   it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
   it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
-
-  it('Fail: not found', async function () {
-    this.timeout(10000);
-
-    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
-  });
-});
-
-describe('search (With Proxy)', function () {
-  const { search } = configure({
-    proxy: {
-      host: process.env.PROXY_HOST || '200.152.100.178',
-      port: process.env.PROXY_PORT || '8080',
-    }
-  });
-
-  /** Success tests * */
-  Object.keys(results).forEach(function (plate) {
-    it(`Success: ${plate}`, async function () {
-      this.timeout(10000);
-      const vehicle = await search(plate);
-
-      return expect(vehicle)
-        .to.deep.include(results[plate])
-        .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
-    });
-  });
 
   it('Fail: not found', async function () {
     this.timeout(10000);

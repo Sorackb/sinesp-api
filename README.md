@@ -34,20 +34,27 @@ $ npm install sinesp-api --save
 
 ## API
 
-### search(plate)
+<dl>
+<dt><a href="#search">search(plate)</a> ⇒ <code>Promise.&lt;*&gt;</code></dt>
+<dd><p>Busca o veículo pela placa</p>
+</dd>
+<dt><a href="#configure">configure([host], [endpoint], [serviceVersion], [androidVersion], [proxy])</a> ⇒</dt>
+<dd><p>Configura o módulo</p>
+</dd>
+</dl>
 
-Para consultar utilize a função `search` enviando a placa desejada como parâmetro.
+## search(plate) ⇒ <code>Promise.&lt;\*&gt;</code>
+Busca o veículo pela placa
 
-| Nome        | Tipo     | Requerido | Descrição        |
-| ----------- | :------: | :-------: | ---------------- |
-| `plate`     | *string* | Sim       | Placa do veículo |
+**Retorna**: <code>Promise.&lt;\*&gt;</code> - A representação do veículo identificado pela placa
 
-### Exemplo de utilização
+| Param | Type | Description |
+| --- | --- | --- |
+| plate | <code>string</code> | A placa do veículo a ser consultada |
 
+**Example**
 ```js
-const { search } = require('sinesp-api')();
-
-search('ABC1234').then(veiculo => console.log(JSON.stringify(veiculo)));
+let vehicle = await search('AAA111');
 ```
 
 ### Saída
@@ -74,8 +81,25 @@ search('ABC1234').then(veiculo => console.log(JSON.stringify(veiculo)));
 }
 ```
 
+<a name="configure"></a>
+
+## configure([host], [endpoint], [serviceVersion], [androidVersion], [proxy]) ⇒
+Configura o módulo
+
+**Retorna**: O próprio módulo
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [host] | <code>string</code> | <code>&quot;cidadao.sinesp.gov.br&quot;</code> | Host do serviço SINESP |
+| [endpoint] | <code>string</code> | <code>&quot;/sinesp-cidadao/mobile/consultar-placa/&quot;</code> | Endpoint do serviço SINESP |
+| [serviceVersion] | <code>string</code> | <code>&quot;v4&quot;</code> | Versão do serviço SINESP |
+| [androidVersion] | <code>string</code> | <code>&quot;8.1.0&quot;</code> | Versão do Android a ser informada para o serviço SINESP |
+| [secret] | <code>string</code> | <code>&quot;g8LzUadkEHs7mbRqbX5l&quot;</code> | A chave usada para encriptar a placa |
+| [timeout] | <code>number</code> | <code>0</code> | req/res timeout em ms, reseta ao seguir redirecionamentos. 0 para desabilitar (Limite do SO aplicado) |
+| [proxy] | <code>object</code> | <code>{}</code> | O objeto com configurações de proxy, caso exista |
+
 ---
 
 ## Atenção
 
-Esta implementação não possui nenhum vínculo oficial com o Sistema Nacional de Informações de Segurança Pública (SINESP) e não há garantias de funcionamento. Não há garantias de funcionamento após atualizações da API.
+Esta implementação não possui nenhum vínculo oficial com o Sistema Nacional de Informações de Segurança Pública (SINESP). Não há garantias de funcionamento após atualizações da API.
