@@ -11,3 +11,9 @@ install: npm install
 before_script: greenkeeper-lockfile-update
 after_script: greenkeeper-lockfile-upload
 after_success: npm run coverage
+deploy:
+  provider: npm
+  email: sorackb@gmail.com
+  api_key: $NPM_TOKEN
+  on:
+    tags: true
