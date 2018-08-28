@@ -23,7 +23,7 @@
 | PagSeguro       | PayPal          |
 | :-------------: | :-------------: |
 [![Doe com PagSeguro - é rápido, grátis e seguro!](https://stc.pagseguro.uol.com.br/public/img/botoes/doacoes/209x48-doar-laranja-assina.gif)](https://pag.ae/bhmK2Xf) | [![Make a donation](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LKDGCQBKYBW5E)
- 
+
 Módulo do Node.js que permite a consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP).
 
 ## Instalação
@@ -96,6 +96,7 @@ Configura o módulo
 | [androidVersion] | <code>string</code> | <code>&quot;8.1.0&quot;</code> | Versão do Android a ser informada para o serviço SINESP |
 | [secret] | <code>string</code> | <code>&quot;g8LzUadkEHs7mbRqbX5l&quot;</code> | A chave usada para encriptar a placa |
 | [timeout] | <code>number</code> | <code>0</code> | req/res timeout em ms, reseta ao seguir redirecionamentos. 0 para desabilitar (Limite do SO aplicado) |
+| [maximumRetry] | <code>number</code> | <code>0</code> | Maximum retries if the request fail |
 | [proxy] | <code>object</code> | <code>{}</code> | O objeto com configurações de proxy, caso exista |
 
 ---

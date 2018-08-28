@@ -8,23 +8,24 @@ const { configure } = require('../.');
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
-let results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
-
-// Just one because sometimes build fails with many results
-if (process.env.ONLY_ONE) {
-  results = {
-    AAA1111: results.AAA1111
-  };
-}
+const results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
 
 describe('search', function () {
-  const { search } = configure({
+  configure({
     timeout: 0,
+    host: 'cidadao.sinesp.gov.br',
+    endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
+    serviceVersion: 'v4',
+    androidVersion: '8.1.0',
+    secret: 'g8LzUadkEHs7mbRqbX5l',
+    maximumRetry: 10,
     proxy: {
       host: process.env.PROXY_HOST,
       port: process.env.PROXY_PORT,
     }
   });
+
+  const { search } = configure();
 
   /** Success tests * */
   Object.keys(results).forEach(function (plate) {

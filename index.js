@@ -34,6 +34,7 @@ let opts = {
   androidVersion: '8.1.0',
   secret: 'g8LzUadkEHs7mbRqbX5l',
   timeout: 0,
+  maximumRetry: 0,
   proxy: {},
 };
 
@@ -171,6 +172,37 @@ const formatDate = async (date) => {
 };
 
 /**
+ * Waits a determined time to fulfill a Promise
+ *
+ * @param {number} ms - The milliseconds to fulfill the Promise
+ * @returns {Promise<any>} Represents the fulfilled time
+ */
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+/**
+ * Try to request the following URL using the maximumRetry option
+ *
+ * @param {string} url - The URL to connect
+ * @param {object} options - The options to pass to node-fetch
+ * @param {number} attempt - The current attempt number
+ * @param {number} delay - The time in milliseconds to wait before request
+ *
+ * @returns {Promise<*|void>} Represents the fulfilled request
+ *
+ * @private
+ */
+const retry = async (url, options, attempt = 0, delay = 0) => {
+  try {
+    await sleep(delay);
+    return await fetch(url, options);
+  } catch (e) {
+    if (attempt >= opts.maximumRetry) throw e;
+
+    return retry(url, options, attempt + 1, (delay || 1000) * 2);
+  }
+};
+
+/**
  * Send the request to SINESP's 'search by plate' service
  *
  * @param {string} body - The XML expected by SINESP's service
@@ -190,7 +222,7 @@ const request = async (body) => {
 
   const agent = opts.proxy.host ? new HttpsProxyAgent(`http://${opts.proxy.host}:${opts.proxy.port}`) : null;
 
-  const response = await fetch(url, {
+  const response = await retry(url, {
     body,
     headers,
     agent,
@@ -279,6 +311,7 @@ const search = async (plate = '') => {
  * @param {string} [androidVersion=8.1.0] - Android version to inform to the SINESP service
  * @param {string} [secret=g8LzUadkEHs7mbRqbX5l] - The secred used to encrypt the plate
  * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect. 0 to disable (OS limit applies)
+ * @param {number} [maximumRetry=0] - Maximum retrys if the request fail
  * @param {object} [proxy={}] - The proxy object if exists
  *
  * @returns The module it self
@@ -290,6 +323,7 @@ const configure = ({
   endpoint,
   secret,
   timeout,
+  maximumRetry,
   proxy = {},
 } = {}) => {
   opts = {
@@ -299,6 +333,7 @@ const configure = ({
     androidVersion: androidVersion || opts.serviceVersion,
     secret: secret || opts.secret,
     timeout: timeout || opts.timeout,
+    maximumRetry: maximumRetry || opts.maximumRetry,
     proxy: {
       host: proxy.host || opts.proxy.host,
       port: proxy.port || opts.proxy.port,
