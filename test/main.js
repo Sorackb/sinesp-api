@@ -30,7 +30,7 @@ describe('search', function () {
   /** Success tests * */
   Object.keys(results).forEach(function (plate) {
     it(`Success: ${plate}`, async function () {
-      this.timeout(10000);
+      this.timeout(300000);
       const vehicle = await search(plate);
 
       return expect(vehicle)
