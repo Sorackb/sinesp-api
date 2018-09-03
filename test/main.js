@@ -18,7 +18,7 @@ describe('search', function () {
     serviceVersion: 'v4',
     androidVersion: '8.1.0',
     secret: 'g8LzUadkEHs7mbRqbX5l',
-    maximumRetry: 10,
+    maximumRetry: 3,
     proxy: {
       host: process.env.PROXY_HOST,
       port: process.env.PROXY_PORT,
@@ -31,6 +31,7 @@ describe('search', function () {
   Object.keys(results).forEach(function (plate) {
     it(`Success: ${plate}`, async function () {
       this.timeout(300000);
+      this.retries(4);
       const vehicle = await search(plate);
 
       return expect(vehicle)
@@ -44,7 +45,8 @@ describe('search', function () {
   it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
 
   it('Fail: not found', async function () {
-    this.timeout(10000);
+    this.timeout(300000);
+    this.retries(4);
 
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
   });
