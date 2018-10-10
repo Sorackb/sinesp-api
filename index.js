@@ -277,7 +277,7 @@ const generateBody = async (plate) => {
         'xmlns:n0': 'http://soap.ws.placa.service.sinesp.serpro.gov.br/',
       },
       'n0:getStatus': {
-        a: plate,
+        a: usedPlate,
       }
     }
   };
@@ -342,11 +342,11 @@ const configure = ({
 
   return {
     configure,
-    search
+    search,
   };
 };
 
 module.exports = {
   configure,
-  search
+  search,
 };
