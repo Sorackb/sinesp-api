@@ -50,4 +50,23 @@ describe('search', function () {
 
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
   });
+  it('Fail: Should raise an error in retry method', async function () {
+    this.timeout(30000);
+    const searchWithError =
+      configure({
+        timeout: 0,
+        host: 'incorrect-host.sinesp.gov.br',
+        endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
+        serviceVersion: 'v4',
+        androidVersion: '8.1.0',
+        secret: 'g8LzUadkEHs7mbRqbX5l',
+        maximumRetry: 0,
+        proxy: {
+          host: process.env.PROXY_HOST,
+          port: process.env.PROXY_PORT,
+        }
+      }).search;
+  
+    return expect(searchWithError('ZZZ9999')).to.be.rejectedWith("request to https://incorrect-host.sinesp.gov.br/sinesp-cidadao/mobile/consultar-placa/v4 failed, reason: getaddrinfo ENOTFOUND incorrect-host.sinesp.gov.br incorrect-host.sinesp.gov.br:443");
+  })
 });
