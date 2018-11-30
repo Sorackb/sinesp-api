@@ -15,19 +15,19 @@
     "chassi": "01191"
   },
   "ABC1234": {
-    "codigoRetorno": "0",
-    "mensagemRetorno": "Sem erros.",
-    "codigoSituacao": "0",
-    "situacao": "Sem restrição",
-    "modelo": "FIAT/UNO MILLE EP",
-    "marca": "FIAT/UNO MILLE EP",
-    "cor": "BRANCA",
-    "ano": "1996",
-    "anoModelo": "1996",
-    "placa": "ABC1234",
-    "uf": "DF",
-    "municipio": "BRASILIA",
-    "chassi": "99092"
+    "codigoRetorno":"0",
+    "mensagemRetorno":"Sem erros.",
+    "codigoSituacao":"0",
+    "situacao":"Sem restrição",
+    "modelo":"VW/SANTANA CG",
+    "marca":"VW/SANTANA CG",
+    "cor":"Vermelha",
+    "ano":"1986",
+    "anoModelo":"1986",
+    "placa":"ABC1234",
+    "uf":"PR",
+    "municipio":"LOBATO",
+    "chassi":"46344"
   },
   "MUT6002": {
     "codigoRetorno": "0",
