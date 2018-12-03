@@ -230,6 +230,10 @@ const request = async (body) => {
     timeout: opts.timeout,
   });
 
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+
   return normalize(await response.text());
 };
 

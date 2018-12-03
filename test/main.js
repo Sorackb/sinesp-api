@@ -50,4 +50,14 @@ describe('search', function () {
 
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
   });
+
+  it('Fail: Wrong URL', async() => {
+    configure({
+      endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
+    });
+
+    const { search } = configure();
+
+    return expect(search('ZZZ9999')).to.be.rejectedWith('Not Found');
+  });
 });
