@@ -51,7 +51,7 @@ describe('search', function () {
     return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
   });
 
-  it('Fail: Wrong URL', async() => {
+  it('Fail: Wrong URL', async function() {
     this.timeout(300000);
 
     configure({
