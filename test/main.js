@@ -52,6 +52,8 @@ describe('search', function () {
   });
 
   it('Fail: Wrong URL', async() => {
+    this.timeout(300000);
+
     configure({
       endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
     });
