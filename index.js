@@ -194,7 +194,13 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 const retry = async (url, options, attempt = 0, delay = 0) => {
   try {
     await sleep(delay);
-    return await fetch(url, options);
+    const response = await fetch(url, options);
+
+    if (response.status !== 200) {
+      throw new Error(response.statusText);
+    }
+
+    return response;
   } catch (e) {
     if (attempt >= opts.maximumRetry) throw e;
 
@@ -229,10 +235,6 @@ const request = async (body) => {
     method: 'POST',
     timeout: opts.timeout,
   });
-
-  if (response.status !== 200) {
-    throw new Error(response.statusText);
-  }
 
   return normalize(await response.text());
 };
