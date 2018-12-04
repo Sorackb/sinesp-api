@@ -175,6 +175,7 @@ const formatDate = async (date) => {
  * Waits a determined time to fulfill a Promise
  *
  * @param {number} ms - The milliseconds to fulfill the Promise
+ *
  * @returns {Promise<any>} Represents the fulfilled time
  */
 const sleep = ms => new Promise(res => setTimeout(res, ms));
@@ -194,11 +195,7 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 const retry = async (url, options, attempt = 0, delay = 0) => {
   try {
     await sleep(delay);
-    const { status, statusText, data } = await axios.request({ url, ...options });
-
-    if (status !== 200) {
-      throw new Error(statusText);
-    }
+    const { data } = await axios.request({ url, ...options });
 
     return data;
   } catch (e) {
