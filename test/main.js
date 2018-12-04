@@ -61,6 +61,6 @@ describe('search', function () {
 
     const { search } = configure();
 
-    return expect(search('ZZZ9999')).to.be.rejectedWith('Not Found');
+    return expect(search('ZZZ9999')).to.be.rejected;
   });
 });

@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "https-proxy-agent": "^2.2.1",
-    "node-fetch": "^2.2.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {

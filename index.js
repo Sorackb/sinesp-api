@@ -4,7 +4,7 @@
  * @author Lucas Bernardo
  *
  * @requires NPM:xml2js
- * @requires NPM:node-fetch
+ * @requires NPM:axios
  * @requires NPM:https-proxy-agent
  */
 
@@ -12,7 +12,7 @@ const { createHmac } = require('crypto');
 const { promisify } = require('util');
 
 const { parseString, Builder } = require('xml2js');
-const fetch = require('node-fetch');
+const axios = require('axios');
 const HttpsProxyAgent = require('https-proxy-agent');
 
 const promisedParseString = promisify(parseString);
@@ -194,13 +194,13 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 const retry = async (url, options, attempt = 0, delay = 0) => {
   try {
     await sleep(delay);
-    const response = await fetch(url, options);
+    const { status, statusText, data } = await axios.request({ url, ...options });
 
-    if (response.status !== 200) {
-      throw new Error(response.statusText);
+    if (status !== 200) {
+      throw new Error(statusText);
     }
 
-    return response;
+    return data;
   } catch (e) {
     if (attempt >= opts.maximumRetry) throw e;
 
@@ -211,13 +211,13 @@ const retry = async (url, options, attempt = 0, delay = 0) => {
 /**
  * Send the request to SINESP's 'search by plate' service
  *
- * @param {string} body - The XML expected by SINESP's service
+ * @param {string} data - The XML expected by SINESP's service
  *
  * @returns {Promise<object>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
-const request = async (body) => {
+const request = async (data) => {
   const url = `https://${opts.host}${opts.endpoint}${opts.serviceVersion}`;
 
   const headers = {
@@ -226,17 +226,17 @@ const request = async (body) => {
     Host: opts.host,
   };
 
-  const agent = opts.proxy.host ? new HttpsProxyAgent(`http://${opts.proxy.host}:${opts.proxy.port}`) : null;
+  const httpsAgent = opts.proxy.host ? new HttpsProxyAgent(`http://${opts.proxy.host}:${opts.proxy.port}`) : null;
 
   const response = await retry(url, {
-    body,
+    data,
     headers,
-    agent,
+    httpsAgent,
     method: 'POST',
     timeout: opts.timeout,
   });
 
-  return normalize(await response.text());
+  return normalize(response);
 };
 
 /**
