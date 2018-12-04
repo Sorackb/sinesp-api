@@ -56,6 +56,7 @@ describe('search', function () {
 
     configure({
       endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
+      proxy: {},
     });
 
     const { search } = configure();

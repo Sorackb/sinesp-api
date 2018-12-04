@@ -48,13 +48,13 @@ let opts = {
  * @private
  */
 const validate = async (plate) => {
-  const usedPlate = plate.replace(SPECIAL, '');
+  const plateToUse = plate.replace(SPECIAL, '');
 
-  if (!PLATE_FORMAT.test(usedPlate)) {
+  if (!PLATE_FORMAT.test(plateToUse)) {
     throw new Error('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".');
   }
 
-  return usedPlate;
+  return plateToUse;
 };
 
 /**
@@ -250,13 +250,13 @@ const request = async (body) => {
  */
 const generateBody = async (plate) => {
   const builder = new Builder({ rootName: 'v:Envelope' });
-  const usedPlate = await validate(plate);
+  const plateToUse = await validate(plate);
 
   const [ip, latitude, longitude, token, date] = await Promise.all([
     generateIPAddress(),
     generateLatitude(),
     generateLongitude(),
-    generateToken(usedPlate),
+    generateToken(plateToUse),
     formatDate(new Date()),
   ]);
 
@@ -283,7 +283,7 @@ const generateBody = async (plate) => {
         'xmlns:n0': 'http://soap.ws.placa.service.sinesp.serpro.gov.br/',
       },
       'n0:getStatus': {
-        a: usedPlate,
+        a: plateToUse,
       }
     }
   };
