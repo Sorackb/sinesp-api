@@ -27,7 +27,7 @@ const promisedParseString = promisify(parseString);
 const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/im;
 const SPECIAL = /[^a-zA-Z0-9]/i;
 
-let opts = {
+const DEFAULT = {
   host: 'cidadao.sinesp.gov.br',
   endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
   serviceVersion: 'v4',
@@ -37,6 +37,8 @@ let opts = {
   maximumRetry: 0,
   proxy: {},
 };
+
+let opts = {};
 
 /**
  * Validate the format of the plate informed
@@ -330,16 +332,16 @@ const configure = ({
   proxy = {},
 } = {}) => {
   opts = {
-    host: host || opts.host,
-    endpoint: endpoint || opts.endpoint,
-    serviceVersion: serviceVersion || opts.serviceVersion,
-    androidVersion: androidVersion || opts.serviceVersion,
-    secret: secret || opts.secret,
-    timeout: timeout || opts.timeout,
-    maximumRetry: maximumRetry || opts.maximumRetry,
+    host: host || DEFAULT.host,
+    endpoint: endpoint || DEFAULT.endpoint,
+    serviceVersion: serviceVersion || DEFAULT.serviceVersion,
+    androidVersion: androidVersion || DEFAULT.serviceVersion,
+    secret: secret || DEFAULT.secret,
+    timeout: timeout || DEFAULT.timeout,
+    maximumRetry: maximumRetry || DEFAULT.maximumRetry,
     proxy: {
-      host: proxy.host || opts.proxy.host,
-      port: proxy.port || opts.proxy.port,
+      host: proxy.host || DEFAULT.proxy.host,
+      port: proxy.port || DEFAULT.proxy.port,
     },
   };
 
@@ -348,6 +350,8 @@ const configure = ({
     search,
   };
 };
+
+configure();
 
 module.exports = {
   configure,

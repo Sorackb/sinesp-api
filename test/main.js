@@ -11,7 +11,7 @@ const expect = chai.expect;
 const results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
 
 describe('search', function () {
-  configure({
+  const { search } = configure({
     timeout: 0,
     host: 'cidadao.sinesp.gov.br',
     endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
@@ -24,8 +24,6 @@ describe('search', function () {
       port: process.env.PROXY_PORT,
     }
   });
-
-  const { search } = configure();
 
   /** Success tests * */
   Object.keys(results).forEach(function (plate) {
@@ -54,12 +52,10 @@ describe('search', function () {
   it('Fail: Wrong URL', async function() {
     this.timeout(300000);
 
-    configure({
+    const { search } = configure({
       endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
       proxy: {},
     });
-
-    const { search } = configure();
 
     return expect(search('ZZZ9999')).to.be.rejected;
   });
