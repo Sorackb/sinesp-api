@@ -54,6 +54,7 @@ describe('search', function () {
 
     const { search } = configure({
       endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
+      maximumRetry: 3,
       proxy: {},
     });
 
