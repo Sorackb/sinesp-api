@@ -1,4 +1,4 @@
-/* eslint-disable no-undef,prefer-arrow-callback */
+/* eslint-disable */
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { join } = require('path');

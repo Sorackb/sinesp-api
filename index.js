@@ -283,8 +283,8 @@ const generateBody = async (plate) => {
       },
       'n0:getStatus': {
         a: plateToUse,
-      }
-    }
+      },
+    },
   };
 
   return builder.buildObject(body);
@@ -315,7 +315,8 @@ const search = async (plate = '') => {
  * @param {string} [serviceVersion=v4] - Service version of SINESP
  * @param {string} [androidVersion=8.1.0] - Android version to inform to the SINESP service
  * @param {string} [secret=g8LzUadkEHs7mbRqbX5l] - The secred used to encrypt the plate
- * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect. 0 to disable (OS limit applies)
+ * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect.
+ *                               0 to disable (OS limit applies)
  * @param {number} [maximumRetry=0] - Maximum retrys if the request fail
  * @param {object} [proxy={}] - The proxy object if exists
  *
