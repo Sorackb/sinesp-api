@@ -53,7 +53,7 @@ describe('search', function () {
     this.timeout(300000);
 
     const { search } = configure({
-      endpoint: '/sinesp-cidadao/mobile/errado-consultar-placa/',
+      endpoint: '/errado-sinesp-cidadao/mobile/consultar-placa/',
       maximumRetry: 3,
       proxy: {},
     });
