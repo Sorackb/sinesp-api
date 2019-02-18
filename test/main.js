@@ -9,8 +9,16 @@ chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 const results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
+const proxies = JSON.parse(readFileSync(join(__dirname, 'proxies.json')));
 
 describe('search', function () {
+  let proxy = {};
+
+  if (process.env.PROXY) {
+    const chosen = proxies[Math.floor(Math.random() * proxies.length)]; 
+    proxy = chosen;
+  }
+
   const { search } = configure({
     timeout: 0,
     host: 'cidadao.sinesp.gov.br',
@@ -20,8 +28,8 @@ describe('search', function () {
     secret: 'g8LzUadkEHs7mbRqbX5l',
     maximumRetry: 3,
     proxy: {
-      host: process.env.PROXY_HOST,
-      port: process.env.PROXY_PORT,
+      host: proxy.host,
+      port: proxy.port,
     }
   });
 
