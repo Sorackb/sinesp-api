@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha --sort",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "update:packages": "ncu -u"
   },
   "repository": {
     "type": "git",
@@ -38,8 +39,9 @@
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.0",
     "mocha-lcov-reporter": "^1.3.0",
+    "npm-check-updates": "^2.15.0",
     "nyc": "^13.3.0"
   }
 }

@@ -15,7 +15,7 @@ describe('search', function () {
   let proxy = {};
 
   if (process.env.PROXY) {
-    const chosen = proxies[Math.floor(Math.random() * proxies.length)]; 
+    const chosen = proxies[Math.floor(Math.random() * proxies.length)];
     proxy = chosen;
   }
 
@@ -33,17 +33,30 @@ describe('search', function () {
     }
   });
 
-  /** Success tests * */
-  Object.keys(results).forEach(function (plate) {
-    it(`Success: ${plate}`, async function () {
-      this.timeout(300000);
-      this.retries(4);
-      const vehicle = await search(plate);
+  const plates = Object.keys(results);
+  const plate1 = plates[Math.floor(Math.random() * plates.length)];
 
-      return expect(vehicle)
-        .to.deep.include(results[plate])
-        .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
-    });
+  it(`Success: ${plate1}`, async function () {
+    this.timeout(300000);
+    this.retries(4);
+    const vehicle = await search(plate1);
+
+    return expect(vehicle)
+      .to.deep.include(results[plate1])
+      .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
+  });
+
+  const plate2 = plates[Math.floor(Math.random() * plates.length)];
+  const formated = plate2.replace(/([a-zA-Z]{3})([0-9]{4})/, '$1-$2');
+
+  it(`Success: ${formated}`, async function () {
+    this.timeout(300000);
+    this.retries(4);
+    const vehicle = await search(formated);
+
+    return expect(vehicle)
+      .to.deep.include(results[plate2])
+      .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
   });
 
   it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
