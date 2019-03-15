@@ -20,7 +20,7 @@ describe('search', function () {
   let search;
 
   before(async function () {
-    let proxy = {};
+    let proxy;
 
     // Search by a avaible proxy leading by High Anonymity, followed by Anonymity and finally by No Anonymity
     if (process.env.PROXY) {
@@ -32,6 +32,7 @@ describe('search', function () {
     };
 
     search = configure({
+      proxy,
       timeout: 0,
       host: 'cidadao.sinesp.gov.br',
       endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
@@ -39,10 +40,6 @@ describe('search', function () {
       androidVersion: '8.1.0',
       secret: 'g8LzUadkEHs7mbRqbX5l',
       maximumRetry: 3,
-      proxy: {
-        host: proxy.host,
-        port: proxy.port,
-      }
     }).search;
   });
 
