@@ -186,9 +186,9 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
  * Try to request the following URL using the maximumRetry option
  *
  * @param {string} url - The URL to connect
- * @param {object} options - The options to pass to node-fetch
- * @param {number} attempt - The current attempt number
- * @param {number} delay - The time in milliseconds to wait before request
+ * @param {object} options - The options to pass to axios
+ * @param {number} [attempt=0] - The current attempt number
+ * @param {number} [delay=0] - The time in milliseconds to wait before request
  *
  * @returns {Promise<*|void>} Represents the fulfilled request
  *
