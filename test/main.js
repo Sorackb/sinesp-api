@@ -3,34 +3,44 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { join } = require('path');
 const { readFileSync } = require('fs');
+const { request } = require('axios');
 const { configure } = require('../.');
+
+const NO_ANONYMITY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})[ ]BR\-N.+\+/g;
+const ANONYMITY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})[ ]BR\-A.+\+/g;
+const HIGH_ANONYMITY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})[ ]BR\-H.+\+/g;
+const PROXY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})/;
 
 chai.use(chaiAsPromised);
 
 const expect = chai.expect;
 const results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
-const proxies = JSON.parse(readFileSync(join(__dirname, 'proxies.json')));
 
 describe('search', function () {
-  let proxy = {};
+  let search;
 
-  if (process.env.PROXY) {
-    const chosen = proxies[Math.floor(Math.random() * proxies.length)];
-    proxy = chosen;
-  }
+  before(async function () {
+    let proxy;
 
-  const { search } = configure({
-    timeout: 0,
-    host: 'cidadao.sinesp.gov.br',
-    endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
-    serviceVersion: 'v4',
-    androidVersion: '8.1.0',
-    secret: 'g8LzUadkEHs7mbRqbX5l',
-    maximumRetry: 3,
-    proxy: {
-      host: proxy.host,
-      port: proxy.port,
-    }
+    // Search by a avaible proxy leading by High Anonymity, followed by Anonymity and finally by No Anonymity
+    if (process.env.PROXY) {
+      const { data } = await request('http://spys.me/proxy.txt');
+      const proxies = data.match(HIGH_ANONYMITY) || data.match(ANONYMITY) || data.match(NO_ANONYMITY);
+      const chosen = proxies[Math.floor(Math.random() * proxies.length)];
+      const [all, host, port] = PROXY.exec(chosen);
+      proxy = { host, port };
+    };
+
+    search = configure({
+      proxy,
+      timeout: 0,
+      host: 'cidadao.sinesp.gov.br',
+      endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
+      serviceVersion: 'v4',
+      androidVersion: '8.1.0',
+      secret: 'g8LzUadkEHs7mbRqbX5l',
+      maximumRetry: 3,
+    }).search;
   });
 
   const plates = Object.keys(results);
@@ -75,7 +85,7 @@ describe('search', function () {
 
     const { search } = configure({
       endpoint: '/errado-sinesp-cidadao/mobile/consultar-placa/',
-      maximumRetry: 3,
+      maximumRetry: 2,
       proxy: {},
     });
 
