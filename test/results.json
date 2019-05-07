@@ -1,4 +1,19 @@
 {
+  "LSU3J43": {
+    "codigoRetorno": "0",
+    "mensagemRetorno": "Sem erros.",
+    "codigoSituacao": "0",
+    "situacao": "Sem restrição",
+    "modelo": "JEEP/COMPASS TRAILHAWK D",
+    "marca": "JEEP/COMPASS TRAILHAWK D",
+    "cor": "Cinza",
+    "ano": "2016",
+    "anoModelo": "2017",
+    "placa": "LSU3J43",
+    "uf": "RJ",
+    "municipio": "RIO DE JANEIRO",
+    "chassi": "02479"
+  },
   "AAA-1111": {
     "codigoRetorno": "0",
     "mensagemRetorno": "Sem erros.",

@@ -13,6 +13,7 @@ const PROXY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})/;
 
 chai.use(chaiAsPromised);
 
+const FORMAT_MESSAGE = 'Formato de placa inválido! Utilize o formato "LLLNLNN", "LLLNNLN" ou "LLLNNNN" (em que L é letra e N, número).';
 const expect = chai.expect;
 const results = JSON.parse(readFileSync(join(__dirname, 'results.json')));
 
@@ -44,6 +45,18 @@ describe('search', function () {
   });
 
   const plates = Object.keys(results);
+  const plate0 = 'LSU3J43';
+
+  it(`Success: ${plate0}`, async function() {
+    this.timeout(300000);
+    this.retries(4);
+    const vehicle = await search(plate0);
+
+    return expect(vehicle)
+      .to.deep.include(results[plate0])
+      .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
+  });
+
   const plate1 = plates[Math.floor(Math.random() * plates.length)];
 
   it(`Success: ${plate1}`, async function () {
@@ -69,9 +82,9 @@ describe('search', function () {
       .to.contain.keys('data', 'dataAtualizacaoAlarme', 'dataAtualizacaoRouboFurto', 'dataAtualizacaoCaracteristicasVeiculo');
   });
 
-  it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
-  it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
-  it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".'));
+  it('Fail: no parameter provided', async () => expect(search()).to.be.rejectedWith(FORMAT_MESSAGE));
+  it('Fail: empty plate', async () => expect(search('')).to.be.rejectedWith(FORMAT_MESSAGE));
+  it('Fail: bad format', async () => expect(search('AAAAAAA')).to.be.rejectedWith(FORMAT_MESSAGE));
 
   it('Fail: not found', async function () {
     this.timeout(300000);

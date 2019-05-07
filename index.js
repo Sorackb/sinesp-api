@@ -18,13 +18,17 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const promisedParseString = promisify(parseString);
 
 /**
- * The accepted format: AAA0000
+ * The accepted format: AAA0000, AAA0AA0, AAA00A0
  *
  * @constant
  *
  * @type {RegExp}
  */
-const PLATE_FORMAT = /^[a-zA-Z]{3}[0-9]{4}$/im;
+const PLATE_FORMATS = [
+  /^[a-zA-Z]{3}[0-9]{4}$/im,
+  /^[a-zA-Z]{3}[0-9]{1}[a-zA-Z]{1}[0-9]{2}$/im,
+  /^[a-zA-Z]{3}[0-9]{2}[a-zA-Z]{1}[0-9]{1}$/im,
+];
 const SPECIAL = /[^a-zA-Z0-9]/i;
 
 const DEFAULT = {
@@ -52,8 +56,10 @@ let opts = {};
 const validate = async (plate) => {
   const plateToUse = plate.replace(SPECIAL, '');
 
-  if (!PLATE_FORMAT.test(plateToUse)) {
-    throw new Error('Formato de placa inválido! Utilize o formato "AAA9999" ou "AAA-9999".');
+  const valid = PLATE_FORMATS.reduce((res, format) => res || format.test(plateToUse), false);
+
+  if (!valid) {
+    throw new Error('Formato de placa inválido! Utilize o formato "LLLNLNN", "LLLNNLN" ou "LLLNNNN" (em que L é letra e N, número).');
   }
 
   return plateToUse;
