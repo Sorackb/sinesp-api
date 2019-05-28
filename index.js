@@ -4,18 +4,17 @@
  * @author Lucas Bernardo
  *
  * @requires NPM:xml2js
- * @requires NPM:axios
- * @requires NPM:https-proxy-agent
+ * @requires NPM:request
  */
 
 const { createHmac } = require('crypto');
 const { promisify } = require('util');
 
 const { parseString, Builder } = require('xml2js');
-const axios = require('axios');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { post } = require('request');
 
 const promisedParseString = promisify(parseString);
+const promisedPost = promisify(post);
 
 /**
  * The accepted format: AAA0000, AAA0AA0, AAA00A0
@@ -191,8 +190,7 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 /**
  * Try to request the following URL using the maximumRetry option
  *
- * @param {string} url - The URL to connect
- * @param {object} options - The options to pass to axios
+ * @param {object} options - The options to pass to request
  * @param {number} [attempt=0] - The current attempt number
  * @param {number} [delay=0] - The time in milliseconds to wait before request
  *
@@ -200,29 +198,31 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
  *
  * @private
  */
-const retry = async (url, options, attempt = 0, delay = 0) => {
+const retry = async (options, attempt = 0, delay = 0) => {
   try {
     await sleep(delay);
-    const { data } = await axios.request({ url, ...options });
+    const { statusCode, body } = await promisedPost(options);
 
-    return data;
+    if (statusCode !== 200) throw new Error(body);
+
+    return body;
   } catch (e) {
     if (attempt >= opts.maximumRetry) throw e;
 
-    return retry(url, options, attempt + 1, (delay || 1000) * 2);
+    return retry(options, attempt + 1, (delay || 1000) * 2);
   }
 };
 
 /**
  * Send the request to SINESP's 'search by plate' service
  *
- * @param {string} data - The XML expected by SINESP's service
+ * @param {string} body - The XML expected by SINESP's service
  *
  * @returns {Promise<object>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
-const request = async (data) => {
+const request = async (body) => {
   const url = `https://${opts.host}${opts.endpoint}${opts.serviceVersion}`;
 
   const headers = {
@@ -231,15 +231,17 @@ const request = async (data) => {
     Host: opts.host,
   };
 
-  const httpsAgent = opts.proxy.host ? new HttpsProxyAgent(`http://${opts.proxy.host}:${opts.proxy.port}`) : null;
+  const proxy = opts.proxy.host ? `http://${opts.proxy.host}:${opts.proxy.port}` : null;
 
-  const response = await retry(url, {
-    data,
+  const options = {
+    url,
+    body,
     headers,
-    httpsAgent,
-    method: 'POST',
+    proxy,
     timeout: opts.timeout,
-  });
+  };
+
+  const response = await retry(options);
 
   return normalize(response);
 };
