@@ -359,7 +359,6 @@ const configure = ({
 };
 
 configure();
-search('LSU3J43').then(console.log);
 
 module.exports = {
   configure,
