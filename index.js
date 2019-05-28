@@ -199,18 +199,12 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
  * @private
  */
 const retry = async (options, attempt = 0, delay = 0) => {
-  try {
-    await sleep(delay);
-    const { statusCode, body } = await promisedPost(options);
+  await sleep(delay);
+  const { statusCode, body } = await promisedPost(options);
 
-    if (statusCode !== 200) throw new Error(body);
-
-    return body;
-  } catch (e) {
-    if (attempt >= opts.maximumRetry) throw e;
-
-    return retry(options, attempt + 1, (delay || 1000) * 2);
-  }
+  if (statusCode === 200) return body;
+  if (attempt >= opts.maximumRetry) throw Error(body);
+  return retry(options, attempt + 1, (delay || 1000) * 2);
 };
 
 /**
