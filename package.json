@@ -7,7 +7,7 @@
     "node": ">=7.6"
   },
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha --sort --tls-min-v1.1",
+    "test": "nyc --reporter=html --reporter=text mocha --sort --tls-min-v1.0",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
