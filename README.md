@@ -26,6 +26,13 @@
 
 Módulo do Node.js que permite a consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP).
 
+## Pré-requisitos
+
+- A origem de utilização deve ser do Brasil. Caso seja utilizado um cliente com outra origem será necessário o uso de proxy;
+- Versões do Node.js anteriores a 8 não são compatíveis;
+- Entre a versão 8 e 10 do Node.js há compatibilidade total;
+- A partir da versão 11 do Node.js é necessário utilizar o argumento [`--tls-min-v1.0`](https://nodejs.org/api/tls.html#tls_tls_default_min_version);
+
 ## Instalação
 
 ```
