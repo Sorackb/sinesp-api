@@ -4,17 +4,16 @@
  * @author Lucas Bernardo
  *
  * @requires NPM:xml2js
- * @requires NPM:request
  */
 
 const { createHmac } = require('crypto');
 const { promisify } = require('util');
 
 const { parseString, Builder } = require('xml2js');
-const { post } = require('request');
+
+const { retry } = require('./tools');
 
 const promisedParseString = promisify(parseString);
-const promisedPost = promisify(post);
 
 /**
  * The accepted format: AAA0000, AAA0AA0, AAA00A0
@@ -179,35 +178,6 @@ const formatDate = async (date) => {
 };
 
 /**
- * Waits a determined time to fulfill a Promise
- *
- * @param {number} ms - The milliseconds to fulfill the Promise
- *
- * @returns {Promise<any>} Represents the fulfilled time
- */
-const sleep = ms => new Promise(res => setTimeout(res, ms));
-
-/**
- * Try to request the following URL using the maximumRetry option
- *
- * @param {object} options - The options to pass to request
- * @param {number} [attempt=0] - The current attempt number
- * @param {number} [delay=0] - The time in milliseconds to wait before request
- *
- * @returns {Promise<*|void>} Represents the fulfilled request
- *
- * @private
- */
-const retry = async (options, attempt = 0, delay = 0) => {
-  await sleep(delay);
-  const { statusCode, body } = await promisedPost(options);
-
-  if (statusCode === 200) return body;
-  if (attempt >= opts.maximumRetry) throw Error(body);
-  return retry(options, attempt + 1, (delay || 1000) * 2);
-};
-
-/**
  * Send the request to SINESP's 'search by plate' service
  *
  * @param {string} body - The XML expected by SINESP's service
@@ -232,6 +202,7 @@ const request = async (body) => {
     body,
     headers,
     proxy,
+    method: 'POST',
     timeout: opts.timeout,
   };
 
