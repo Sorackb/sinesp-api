@@ -97,11 +97,11 @@ describe('search', function () {
     this.timeout(300000);
 
     const { search } = configure({
-      endpoint: '/errado-sinesp-cidadao/mobile/consultar-placa/',
+      host: 'errado.sinesp.gov.br',
       maximumRetry: 2,
       proxy: {},
     });
 
-    return expect(search('ZZZ9999')).to.be.rejected;
+    return expect(search('ZZZ9999')).to.be.rejectedWith('ENOTFOUND errado.sinesp.gov.br');
   });
 });

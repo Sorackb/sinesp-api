@@ -206,7 +206,7 @@ const request = async (body) => {
     timeout: opts.timeout,
   };
 
-  const response = await retry(options);
+  const response = await retry(options, 0, 0, opts.maximumRetry);
 
   return normalize(response);
 };
