@@ -3,7 +3,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const { join } = require('path');
 const { readFileSync } = require('fs');
-const { configure } = require('../index');
+const { configure } = require('../.');
 const { retry } = require('../tools');
 
 const NO_ANONYMITY = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\:(\d{1,})[ ]BR\-N.+\+/g;
@@ -25,7 +25,7 @@ describe('search', function () {
 
     // Search by a avaible proxy leading by High Anonymity, followed by Anonymity and finally by No Anonymity
     if (process.env.PROXY) {
-      const { data } = await retry({ url: 'http://spys.me/proxy.txt', method: 'GET' });
+      const data = await retry({ url: 'http://spys.me/proxy.txt', method: 'GET' });
       const proxies = data.match(HIGH_ANONYMITY) || data.match(ANONYMITY) || data.match(NO_ANONYMITY);
       const chosen = proxies[Math.floor(Math.random() * proxies.length)];
       const [all, host, port] = PROXY.exec(chosen);
