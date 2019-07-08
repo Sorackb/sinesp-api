@@ -37,9 +37,9 @@ describe('search', function () {
       timeout: 0,
       host: 'cidadao.sinesp.gov.br',
       endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
-      serviceVersion: 'v4',
-      androidVersion: '8.1.0',
-      secret: 'g8LzUadkEHs7mbRqbX5l',
+      serviceVersion: 'v5',
+      androidVersion: '6.0',
+      secret: '0KnlVSWHxOih3zKXBWlo',
       maximumRetry: 3,
     }).search;
   });

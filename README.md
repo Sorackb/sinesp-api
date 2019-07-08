@@ -99,9 +99,9 @@ Configura o módulo
 | --- | --- | --- | --- |
 | [host] | <code>string</code> | <code>&quot;cidadao.sinesp.gov.br&quot;</code> | Host do serviço SINESP |
 | [endpoint] | <code>string</code> | <code>&quot;/sinesp-cidadao/mobile/consultar-placa/&quot;</code> | Endpoint do serviço SINESP |
-| [serviceVersion] | <code>string</code> | <code>&quot;v4&quot;</code> | Versão do serviço SINESP |
-| [androidVersion] | <code>string</code> | <code>&quot;8.1.0&quot;</code> | Versão do Android a ser informada para o serviço SINESP |
-| [secret] | <code>string</code> | <code>&quot;g8LzUadkEHs7mbRqbX5l&quot;</code> | A chave usada para encriptar a placa |
+| [serviceVersion] | <code>string</code> | <code>&quot;v5&quot;</code> | Versão do serviço SINESP |
+| [androidVersion] | <code>string</code> | <code>&quot;6.0&quot;</code> | Versão do Android a ser informada para o serviço SINESP |
+| [secret] | <code>string</code> | <code>&quot;0KnlVSWHxOih3zKXBWlo&quot;</code> | A chave usada para encriptar a placa |
 | [timeout] | <code>number</code> | <code>0</code> | req/res timeout em ms, reseta ao seguir redirecionamentos. 0 para desabilitar (Limite do SO aplicado) |
 | [maximumRetry] | <code>number</code> | <code>0</code> | Número máximo de tentativas se a requisição falhar |
 | [proxy] | <code>object</code> | <code>{}</code> | O objeto com configurações de proxy, caso exista |

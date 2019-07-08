@@ -12,6 +12,7 @@ const { promisify } = require('util');
 const { parseString, Builder } = require('xml2js');
 
 const { retry } = require('./tools');
+const { getValidToken: getFirebaseToken } = require('./firebaseTools');
 
 const promisedParseString = promisify(parseString);
 
@@ -28,13 +29,14 @@ const PLATE_FORMATS = [
   /^[a-zA-Z]{3}[0-9]{2}[a-zA-Z]{1}[0-9]{1}$/im,
 ];
 const SPECIAL = /[^a-zA-Z0-9]/i;
+const FIREBASE_ID = /([^:]+)(:.+)/;
 
 const DEFAULT = {
   host: 'cidadao.sinesp.gov.br',
   endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
-  serviceVersion: 'v4',
-  androidVersion: '8.1.0',
-  secret: 'g8LzUadkEHs7mbRqbX5l',
+  serviceVersion: 'v5',
+  androidVersion: '6.0',
+  secret: '0KnlVSWHxOih3zKXBWlo',
   timeout: 0,
   maximumRetry: 0,
   proxy: {},
@@ -72,8 +74,14 @@ const validate = async (plate) => {
  *
  * @private
  */
-const normalize = async (returnedXML) => {
-  const { 'soap:Envelope': { 'soap:Body': { 'ns2:getStatusResponse': { return: envelope } } } } = await promisedParseString(returnedXML, { explicitArray: false });
+const convert = async (returnedXML) => {
+  const { 'soap:Envelope': {
+    'soap:Body': {
+      'ns2:getStatusResponse': {
+        return: envelope
+      }
+    }
+  } } = await promisedParseString(returnedXML, { explicitArray: false });
 
   if (parseInt(envelope.codigoRetorno, 10) !== 0) {
     throw Error(envelope.mensagemRetorno);
@@ -181,17 +189,21 @@ const formatDate = async (date) => {
  * Send the request to SINESP's 'search by plate' service
  *
  * @param {string} body - The XML expected by SINESP's service
+ * @param {string} firebaseToken - The Firebase generated Id
  *
  * @returns {Promise<object>} Represents the JSON filled with the SINESP's service response
  *
  * @private
  */
-const request = async (body) => {
+const request = async (body, firebaseToken) => {
   const url = `https://${opts.host}${opts.endpoint}${opts.serviceVersion}`;
 
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'User-Agent': 'SinespCidadao / 3.0.2.1 CFNetwork / 758.2.8 Darwin / 15.0.0',
+    'Content-length': body.length,
+    Authorization: `Token ${firebaseToken}`,
+    Accept: 'text/xml',
     Host: opts.host,
   };
 
@@ -208,21 +220,23 @@ const request = async (body) => {
 
   const response = await retry(options, 0, 0, opts.maximumRetry);
 
-  return normalize(response);
+  return convert(response);
 };
 
 /**
  * Generates the XML body in the format expected by the SINESP's service
  *
  * @param {string} plate - Treated and informed plate
+ * @param {string} firebaseToken - The Firebase generated Id
  *
  * @returns {Promise<string>} Represents the filled XML to be sent
  *
  * @private
  */
-const generateBody = async (plate) => {
+const generateBody = async (plate, firebaseToken) => {
   const builder = new Builder({ rootName: 'v:Envelope' });
   const plateToUse = await validate(plate);
+  const [all, authorization] = FIREBASE_ID.exec(firebaseToken);
 
   const [ip, latitude, longitude, token, date] = await Promise.all([
     generateIPAddress(),
@@ -240,7 +254,7 @@ const generateBody = async (plate) => {
       b: 'LGE Nexus 5',
       c: 'ANDROID',
       d: opts.androidVersion,
-      e: '4.3.2',
+      e: '4.7.4',
       f: ip,
       g: token,
       h: longitude,
@@ -249,6 +263,7 @@ const generateBody = async (plate) => {
       k: '',
       l: date,
       m: '8797e74f0d6eb7b1ff3dc114d4aa12d3',
+      n: authorization,
     },
     'v:Body': {
       $: {
@@ -275,9 +290,10 @@ const generateBody = async (plate) => {
  * @returns {Promise<object>} Represents the vehicle identified by the plate
  */
 const search = async (plate = '') => {
-  const body = await generateBody(plate);
+  const firebaseToken = await getFirebaseToken();
+  const body = await generateBody(plate, firebaseToken);
 
-  return request(body);
+  return request(body, firebaseToken);
 };
 
 /**
@@ -285,9 +301,9 @@ const search = async (plate = '') => {
  *
  * @param {string} [host=cidadao.sinesp.gov.br] - Host of SINESP service
  * @param {string} [endpoint=/sinesp-cidadao/mobile/consultar-placa/] - Endpoint of SINESP service
- * @param {string} [serviceVersion=v4] - Service version of SINESP
- * @param {string} [androidVersion=8.1.0] - Android version to inform to the SINESP service
- * @param {string} [secret=g8LzUadkEHs7mbRqbX5l] - The secred used to encrypt the plate
+ * @param {string} [serviceVersion=v5] - Service version of SINESP
+ * @param {string} [androidVersion=6.0] - Android version to inform to the SINESP service
+ * @param {string} [secret=0KnlVSWHxOih3zKXBWlo] - The secred used to encrypt the plate
  * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect.
  *                               0 to disable (OS limit applies)
  * @param {number} [maximumRetry=0] - Maximum retrys if the request fail
@@ -309,7 +325,7 @@ const configure = ({
     host: host || DEFAULT.host,
     endpoint: endpoint || DEFAULT.endpoint,
     serviceVersion: serviceVersion || DEFAULT.serviceVersion,
-    androidVersion: androidVersion || DEFAULT.serviceVersion,
+    androidVersion: androidVersion || DEFAULT.androidVersion,
     secret: secret || DEFAULT.secret,
     timeout: timeout || DEFAULT.timeout,
     maximumRetry: maximumRetry || DEFAULT.maximumRetry,
