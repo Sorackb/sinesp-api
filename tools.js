@@ -1,4 +1,3 @@
-
 /**
  * @file Add JavaScript's functionality
  *

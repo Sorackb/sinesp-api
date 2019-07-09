@@ -36,6 +36,7 @@ const DEFAULT = {
   endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
   serviceVersion: 'v5',
   androidVersion: '6.0',
+  appVersion: '4.7.4',
   secret: '0KnlVSWHxOih3zKXBWlo',
   timeout: 0,
   maximumRetry: 0,
@@ -254,7 +255,7 @@ const generateBody = async (plate, firebaseToken) => {
       b: 'LGE Nexus 5',
       c: 'ANDROID',
       d: opts.androidVersion,
-      e: '4.7.4',
+      e: opts.appVersion,
       f: ip,
       g: token,
       h: longitude,
@@ -290,7 +291,7 @@ const generateBody = async (plate, firebaseToken) => {
  * @returns {Promise<object>} Represents the vehicle identified by the plate
  */
 const search = async (plate = '') => {
-  const firebaseToken = await getFirebaseToken();
+  const firebaseToken = await getFirebaseToken(opts.appVersion);
   const body = await generateBody(plate, firebaseToken);
 
   return request(body, firebaseToken);
@@ -303,6 +304,7 @@ const search = async (plate = '') => {
  * @param {string} [endpoint=/sinesp-cidadao/mobile/consultar-placa/] - Endpoint of SINESP service
  * @param {string} [serviceVersion=v5] - Service version of SINESP
  * @param {string} [androidVersion=6.0] - Android version to inform to the SINESP service
+ * @param {string} [appVersion=4.7.4] - The version of the SINESP's app
  * @param {string} [secret=0KnlVSWHxOih3zKXBWlo] - The secred used to encrypt the plate
  * @param {number} [timeout=0] - req/res timeout in ms, it resets on redirect.
  *                               0 to disable (OS limit applies)
@@ -315,6 +317,7 @@ const configure = ({
   host,
   serviceVersion,
   androidVersion,
+  appVersion,
   endpoint,
   secret,
   timeout,
@@ -326,6 +329,7 @@ const configure = ({
     endpoint: endpoint || DEFAULT.endpoint,
     serviceVersion: serviceVersion || DEFAULT.serviceVersion,
     androidVersion: androidVersion || DEFAULT.androidVersion,
+    appVersion: appVersion || DEFAULT.appVersion,
     secret: secret || DEFAULT.secret,
     timeout: timeout || DEFAULT.timeout,
     maximumRetry: maximumRetry || DEFAULT.maximumRetry,
