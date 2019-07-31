@@ -119,37 +119,6 @@ const generateIPAddress = async () => {
 };
 
 /**
- * Generates the coordinates used in the request
- *
- * @returns {Promise<number>} Represents a random coordinate
- *
- * @private
- */
-const generateCoordinate = async () => {
-  const seed = 2000 / Math.sqrt(Math.random());
-
-  return seed * Math.sin(2 * 3.141592654 * Math.random());
-};
-
-/**
- * Generates a random latitude
- *
- * @returns {Promise<number>} Represents a random latitude
- *
- * @private
- */
-const generateLatitude = async () => await generateCoordinate() - 38.5290245;
-
-/**
- * Generates a random longitude
- *
- * @returns {Promise<number>} Represents a random longitude
- *
- * @private
- */
-const generateLongitude = async () => await generateCoordinate() - 3.7506985;
-
-/**
  * Create the token using 'SHA-1' algoritm based on the plate and the secret
  *
  * @param {string} plate - The plate to be searched
@@ -239,10 +208,8 @@ const generateBody = async (plate, firebaseToken) => {
   const plateToUse = await validate(plate);
   const [all, authorization] = FIREBASE_ID.exec(firebaseToken);
 
-  const [ip, latitude, longitude, token, date] = await Promise.all([
+  const [ip, token, date] = await Promise.all([
     generateIPAddress(),
-    generateLatitude(),
-    generateLongitude(),
     generateToken(plateToUse),
     formatDate(new Date()),
   ]);
@@ -258,8 +225,8 @@ const generateBody = async (plate, firebaseToken) => {
       e: opts.appVersion,
       f: ip,
       g: token,
-      h: longitude,
-      i: latitude,
+      h: 0,
+      i: 0,
       j: '',
       k: '',
       l: date,
