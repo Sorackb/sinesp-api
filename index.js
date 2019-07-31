@@ -119,19 +119,6 @@ const generateIPAddress = async () => {
 };
 
 /**
- * Generates the coordinates used in the request
- *
- * @returns {Promise<number>} Represents a random coordinate
- *
- * @private
- */
-const generateCoordinate = async () => {
-  const seed = 2000 / Math.sqrt(Math.random());
-
-  return seed * Math.sin(2 * 3.141592654 * Math.random());
-};
-
-/**
  * Create the token using 'SHA-1' algoritm based on the plate and the secret
  *
  * @param {string} plate - The plate to be searched
