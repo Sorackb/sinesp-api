@@ -1,6 +1,6 @@
 {
   "name": "sinesp-api",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
   "main": "index.js",
   "engines": {
@@ -35,8 +35,8 @@
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.5",
     "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.18.0",
-    "mocha": "^6.1.4",
+    "eslint-plugin-import": "^2.18.2",
+    "mocha": "^6.2.0",
     "mocha-lcov-reporter": "^1.3.0",
     "nyc": "^14.1.1"
   }
