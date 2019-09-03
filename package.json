@@ -28,7 +28,7 @@
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
     "request": "^2.88.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.22"
   },
   "devDependencies": {
     "chai": "^4.2.0",
