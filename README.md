@@ -28,10 +28,7 @@ Módulo do Node.js que permite a consulta de placa no território nacional utili
 
 ## Pré-requisitos
 
-- A origem de utilização deve ser do Brasil. Caso seja utilizado um cliente com outra origem será necessário o uso de proxy;
 - Versões do Node.js anteriores a 8 não são compatíveis;
-- Entre a versão 8 e 10 do Node.js há compatibilidade total;
-- A partir da versão 11 do Node.js é necessário utilizar o argumento [`--tls-min-v1.0`](https://nodejs.org/api/tls.html#tls_tls_default_min_version);
 
 ## Instalação
 
@@ -45,7 +42,7 @@ $ npm install sinesp-api --save
 <dt><a href="#search">search(plate)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
 <dd><p>Busca o veículo pela placa</p>
 </dd>
-<dt><a href="#configure">configure([host], [endpoint], [serviceVersion], [androidVersion], [proxy])</a> ⇒</dt>
+<dt><a href="#configure">configure([host], [endpoint], [serviceVersion], [proxy])</a> ⇒</dt>
 <dd><p>Configura o módulo</p>
 </dd>
 </dl>
@@ -90,18 +87,16 @@ let vehicle = await search('AAA111');
 
 <a name="configure"></a>
 
-## configure([host], [endpoint], [serviceVersion], [androidVersion], [proxy]) ⇒
+## configure([host], [endpoint], [serviceVersion], [timeout], [maximumRetry], [proxy]) ⇒
 Configura o módulo
 
 **Retorna**: O próprio módulo
 
 | Parâmetro | Tipo | Default | Descrição |
 | --- | --- | --- | --- |
-| [host] | <code>string</code> | <code>&quot;cidadao.sinesp.gov.br&quot;</code> | Host do serviço SINESP |
-| [endpoint] | <code>string</code> | <code>&quot;/sinesp-cidadao/mobile/consultar-placa/&quot;</code> | Endpoint do serviço SINESP |
-| [serviceVersion] | <code>string</code> | <code>&quot;v5&quot;</code> | Versão do serviço SINESP |
-| [androidVersion] | <code>string</code> | <code>&quot;6.0&quot;</code> | Versão do Android a ser informada para o serviço SINESP |
-| [secret] | <code>string</code> | <code>&quot;0KnlVSWHxOih3zKXBWlo&quot;</code> | A chave usada para encriptar a placa |
+| [host] | <code>string</code> | <code>&quot;apicarros.com&quot;</code> | Host do serviço SINESP |
+| [endpoint] | <code>string</code> | <code>&quot;consulta&quot;</code> | Endpoint do serviço SINESP |
+| [serviceVersion] | <code>string</code> | <code>&quot;v1&quot;</code> | Versão do serviço SINESP |
 | [timeout] | <code>number</code> | <code>0</code> | req/res timeout em ms, reseta ao seguir redirecionamentos. 0 para desabilitar (Limite do SO aplicado) |
 | [maximumRetry] | <code>number</code> | <code>0</code> | Número máximo de tentativas se a requisição falhar |
 | [proxy] | <code>object</code> | <code>{}</code> | O objeto com configurações de proxy, caso exista |

@@ -9,30 +9,30 @@
     "cor": "Cinza",
     "ano": "2016",
     "anoModelo": "2017",
-    "placa": "LSU3943",
+    "placa": "LSU3J43",
     "uf": "SC",
     "municipio": "BRACO DO NORTE",
-    "chassi": "02479"
+    "chassi": "*****02479"
   },
   "AAA-1111": {
     "codigoRetorno": "0",
     "mensagemRetorno": "Sem erros.",
     "codigoSituacao": "1",
     "situacao": "Roubo/Furto",
-    "modelo": "VW/SANTANA EXECUTIVO",
-    "marca": "VW/SANTANA EXECUTIVO",
+    "modelo": "SANTANA EXECUTIVO",
+    "marca": "VW",
     "cor": "Preta",
     "ano": "1990",
     "anoModelo": "1990",
     "placa": "AAA1111",
     "uf": "PR",
     "municipio": "CURITIBA",
-    "chassi": "01191"
+    "chassi": "*****01191"
   },
   "ABC1234": {
     "codigoRetorno":"0",
     "mensagemRetorno":"Sem erros.",
-    "codigoSituacao":"0",
+    "codigoSituacao":"1",
     "situacao":"Sem restrição",
     "modelo":"VW/SANTANA CG",
     "marca":"VW/SANTANA CG",
@@ -42,7 +42,7 @@
     "placa":"ABC1234",
     "uf":"PR",
     "municipio":"LOBATO",
-    "chassi":"46344"
+    "chassi":"*****46344"
   },
   "MUT6002": {
     "codigoRetorno": "0",
@@ -57,7 +57,7 @@
     "placa": "MUT6002",
     "uf": "AL",
     "municipio": "MACEIO",
-    "chassi": "02625"
+    "chassi": "*****02625"
   },
   "MVO4619": {
     "codigoRetorno": "0",
@@ -72,22 +72,7 @@
     "placa": "MVO4619",
     "uf": "MG",
     "municipio": "BRASILIA DE MINAS",
-    "chassi": "80738"
-  },
-  "HTH7061": {
-    "codigoRetorno": "0",
-    "mensagemRetorno": "Sem erros.",
-    "codigoSituacao": "0",
-    "situacao": "Sem restrição",
-    "modelo": "DAFRA/KANSAS 150",
-    "marca": "DAFRA/KANSAS 150",
-    "cor": "Preta",
-    "ano": "2008",
-    "anoModelo": "2009",
-    "placa": "HTH7061",
-    "uf": "MS",
-    "municipio": "CAMPO GRANDE",
-    "chassi": "28727"
+    "chassi": "*****80738"
   },
   "NEV5230": {
     "codigoRetorno": "0",
@@ -102,21 +87,6 @@
     "placa": "NEV5230",
     "uf": "AP",
     "municipio": "MACAPA",
-    "chassi": "61087"
-  },
-  "HZD6312": {
-    "codigoRetorno": "0",
-    "mensagemRetorno": "Sem erros.",
-    "codigoSituacao": "0",
-    "situacao": "Sem restrição",
-    "modelo": "VW/GOL CL 1.8",
-    "marca": "VW/GOL CL 1.8",
-    "cor": "Prata",
-    "ano": "1992",
-    "anoModelo": "1992",
-    "placa": "HZD6312",
-    "uf": "SE",
-    "municipio": "ARACAJU",
-    "chassi": "23560"
+    "chassi": "*****61087"
   }
 }

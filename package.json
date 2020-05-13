@@ -1,13 +1,13 @@
 {
   "name": "sinesp-api",
-  "version": "1.5.3",
+  "version": "2.0.0",
   "description": "API para consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP)",
   "main": "index.js",
   "engines": {
     "node": ">=7.6"
   },
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha --sort --tls-min-v1.0",
+    "test": "nyc --reporter=html --reporter=text mocha --sort",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -27,17 +27,17 @@
   },
   "homepage": "https://github.com/Sorackb/sinesp-api#readme",
   "dependencies": {
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "coveralls": "^3.0.9",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.0",
-    "mocha": "^6.2.2",
+    "coveralls": "^3.1.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "mocha": "^7.1.2",
     "mocha-lcov-reporter": "^1.3.0",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.1"
   }
 }

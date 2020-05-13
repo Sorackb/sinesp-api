@@ -35,11 +35,9 @@ describe('search', function () {
     search = configure({
       proxy,
       timeout: 0,
-      host: 'cidadao.sinesp.gov.br',
-      endpoint: '/sinesp-cidadao/mobile/consultar-placa/',
-      serviceVersion: 'v5',
-      androidVersion: '6.0',
-      secret: '0KnlVSWHxOih3zKXBWlo',
+      host: 'apicarros.com',
+      endpoint: 'consulta',
+      serviceVersion: 'v1',
       maximumRetry: 3,
     }).search;
   });
@@ -90,7 +88,7 @@ describe('search', function () {
     this.timeout(300000);
     this.retries(4);
 
-    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
+    return expect(search('ZZZ9999')).to.be.rejectedWith('sem dados na base');
   });
 
   it('Fail: Wrong URL', async function() {
