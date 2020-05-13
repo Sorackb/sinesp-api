@@ -25,7 +25,7 @@ describe('search', function () {
 
     // Search by a avaible proxy leading by High Anonymity, followed by Anonymity and finally by No Anonymity
     if (process.env.PROXY) {
-      const data = await retry({ url: 'http://spys.me/proxy.txt', method: 'GET' });
+      const { body:data } = await retry({ url: 'http://spys.me/proxy.txt', method: 'GET' });
       const proxies = data.match(HIGH_ANONYMITY) || data.match(ANONYMITY) || data.match(NO_ANONYMITY);
       const chosen = proxies[Math.floor(Math.random() * proxies.length)];
       const [all, host, port] = PROXY.exec(chosen);
