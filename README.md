@@ -56,9 +56,11 @@ Busca o veículo pela placa
 | --- | --- | --- |
 | plate | <code>string</code> | A placa do veículo a ser consultada |
 
-**Example**
+**Exemplo**
 ```js
-let vehicle = await search('AAA111');
+const sinespApi = require('sinesp-api');
+
+let vehicle = await sinespApi.search('AAA111');
 ```
 
 ### Saída

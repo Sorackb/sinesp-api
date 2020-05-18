@@ -70,13 +70,15 @@ const validate = async (plate) => {
  * @private
  */
 const convert = async (returnedXML) => {
-  const { 'soap:Envelope': {
-    'soap:Body': {
-      'ns2:getStatusResponse': {
-        return: envelope
-      }
-    }
-  } } = await promisedParseString(returnedXML, { explicitArray: false });
+  const {
+    'soap:Envelope': {
+      'soap:Body': {
+        'ns2:getStatusResponse': {
+          return: envelope,
+        },
+      },
+    },
+  } = await promisedParseString(returnedXML, { explicitArray: false });
 
   return envelope;
 };
@@ -107,7 +109,7 @@ const request = async (plate) => {
 
   if (statusCode === 200) return convert(body);
 
-  const { mensagem:message } = JSON.parse(body);
+  const { mensagem: message } = JSON.parse(body);
 
   throw new Error(message);
 };

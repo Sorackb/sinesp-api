@@ -16,7 +16,7 @@ const request = require('request');
  *
  * @returns {Promise<any>} Represents the fulfilled time
  */
-const sleep = ms => new Promise(res => setTimeout(res, ms));
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
 /**
  * Try to POST the request to the following URL using the maximumRetry option
@@ -35,7 +35,7 @@ const retry = async (options, attempt = 0, delay = 0, maximumRetry = 0) => {
     await sleep(delay);
     const { statusCode, body } = await promisify(request)(options);
     return { statusCode, body };
-  } catch(e) {
+  } catch (e) {
     if (attempt >= maximumRetry) throw Error(e);
     return retry(options, attempt + 1, (delay || 1000) * 2);
   }
