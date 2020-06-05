@@ -2,17 +2,9 @@
  * @file Manages the wrapper of SINESP's search for plates
  *
  * @author Lucas Bernardo
- *
- * @requires NPM:xml2js
  */
 
-const { promisify } = require('util');
-
-const { parseString } = require('xml2js');
-
 const { retry } = require('./tools');
-
-const promisedParseString = promisify(parseString);
 
 /**
  * The accepted format: AAA0000, AAA0AA0, AAA00A0
@@ -61,29 +53,6 @@ const validate = async (plate) => {
 };
 
 /**
- * Transforms the answered XML in a JSON
- *
- * @param {string} returnedXML - The answered XML
- *
- * @returns {Promise<object>} Represents the JSON filled with the XML response
- *
- * @private
- */
-const convert = async (returnedXML) => {
-  const {
-    'soap:Envelope': {
-      'soap:Body': {
-        'ns2:getStatusResponse': {
-          return: envelope,
-        },
-      },
-    },
-  } = await promisedParseString(returnedXML, { explicitArray: false });
-
-  return envelope;
-};
-
-/**
  * Send the request to SINESP's 'search by plate' service
  *
  * @param {string} plate - The plate of the vehicle to be searched
@@ -93,7 +62,7 @@ const convert = async (returnedXML) => {
  * @private
  */
 const request = async (plate) => {
-  const url = `https://${opts.host}/${opts.serviceVersion}/${opts.endpoint}/${plate}`;
+  const url = `https://${opts.host}/${opts.serviceVersion}/${opts.endpoint}/${plate}/json`;
 
   const proxy = opts.proxy.host ? `http://${opts.proxy.host}:${opts.proxy.port}` : null;
 
@@ -107,11 +76,11 @@ const request = async (plate) => {
 
   const { statusCode, body } = await retry(options, 0, 0, opts.maximumRetry);
 
-  if (statusCode === 200) return convert(body);
+  const data = JSON.parse(body);
 
-  const { mensagem: message } = JSON.parse(body);
+  if (statusCode === 200 && data.codigoRetorno === '0') return data;
 
-  throw new Error(message);
+  throw new Error(data.mensagemRetorno);
 };
 
 /**

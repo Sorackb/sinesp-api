@@ -88,7 +88,7 @@ describe('search', function () {
     this.timeout(300000);
     this.retries(4);
 
-    return expect(search('ZZZ9999')).to.be.rejectedWith('sem dados na base');
+    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
   });
 
   it('Fail: Wrong URL', async function() {

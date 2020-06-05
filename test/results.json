@@ -16,8 +16,8 @@
   },
   "AAA-1111": {
     "codigoRetorno": "0",
-    "mensagemRetorno": "Sem erros.",
-    "codigoSituacao": "1",
+    "mensagemRetorno": "Sem erros",
+    "codigoSituacao": "0",
     "situacao": "Roubo/Furto",
     "modelo": "SANTANA EXECUTIVO",
     "marca": "VW",
@@ -31,9 +31,9 @@
   },
   "ABC1234": {
     "codigoRetorno":"0",
-    "mensagemRetorno":"Sem erros.",
+    "mensagemRetorno":"Sem erros",
     "codigoSituacao":"1",
-    "situacao":"Sem restrição",
+    "situacao":"Roubo/Furto",
     "modelo":"VW/SANTANA CG",
     "marca":"VW/SANTANA CG",
     "cor":"Vermelha",
