@@ -72,6 +72,7 @@ const request = async (plate) => {
     method: 'GET',
     timeout: opts.timeout,
     strictSSL: false,
+    rejectUnauthorized: false,
   };
 
   const { statusCode, body } = await retry(options, 0, 0, opts.maximumRetry);
