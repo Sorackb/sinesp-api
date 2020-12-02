@@ -5,7 +5,7 @@
 [![Coverage Status][coveralls-img]][coveralls]
 [![Dependency Status][dep-img]][dep]
 [![devDependency Status][devDep-img]][devDep]
-[![Greenkeeper badge][greenkeeper-img]][greenkeeper]
+[![snyk badge][snyk-img]][snyk]
 
 [npm-img]:         https://img.shields.io/npm/v/sinesp-api.svg
 [npm]:             https://www.npmjs.com/package/sinesp-api
@@ -17,8 +17,8 @@
 [dep]:             https://david-dm.org/Sorackb/sinesp-api
 [devDep-img]:      https://david-dm.org/Sorackb/sinesp-api/dev-status.svg
 [devDep]:          https://david-dm.org/Sorackb/sinesp-api#info=devDependencies
-[greenkeeper-img]: https://badges.greenkeeper.io/Sorackb/sinesp-api.svg
-[greenkeeper]:     https://greenkeeper.io/
+[snyk-img]:        https://snyk.io/test/github/Sorackb/sinesp-api/badge.svg
+[snyk]:            https://snyk.io
 
 | PagSeguro       | PayPal          |
 | :-------------: | :-------------: |
