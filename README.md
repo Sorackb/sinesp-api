@@ -24,7 +24,7 @@
 | :-------------: | :-------------: |
 [![Doe com PagSeguro - é rápido, grátis e seguro!](https://stc.pagseguro.uol.com.br/public/img/botoes/doacoes/209x48-doar-laranja-assina.gif)](https://pag.ae/bhmK2Xf) | [![Make a donation](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LKDGCQBKYBW5E)
 
-Módulo do Node.js que permite a consulta de placa no território nacional utilizando a base de dados do Sistema Nacional de Informações de Segurança Pública (SINESP).
+Módulo do Node.js que permite a consulta de placa no território nacional utilizando a base de dados da [API-Carros](https://github.com/100n0m3/API-Carros).
 
 ## Pré-requisitos
 
@@ -107,4 +107,4 @@ Configura o módulo
 
 ## Atenção
 
-Esta implementação não possui nenhum vínculo oficial com o Sistema Nacional de Informações de Segurança Pública (SINESP). Não há garantias de funcionamento após atualizações da API.
+Esta implementação não possui nenhum vínculo oficial com o Sistema Nacional de Informações de Segurança Pública (SINESP). Utilizamos a [API-Carros](https://github.com/100n0m3/API-Carros) para a obtenção dos dados e deixamos aqui nosso agradecimento pela disponilização do serviço.

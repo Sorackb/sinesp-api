@@ -88,7 +88,7 @@ describe('search', function () {
     this.timeout(300000);
     this.retries(4);
 
-    return expect(search('ZZZ9999')).to.be.rejectedWith('Veículo não encontrado');
+    return expect(search('ZZZ9999')).to.be.rejectedWith('Nenhum veículo foi encontrado para a placa ZZZ9999');
   });
 
   it('Fail: Wrong URL', async function() {
