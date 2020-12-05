@@ -18,7 +18,7 @@
 [devDep-img]:      https://david-dm.org/Sorackb/sinesp-api/dev-status.svg
 [devDep]:          https://david-dm.org/Sorackb/sinesp-api#info=devDependencies
 [snyk-img]:        https://snyk.io/test/github/Sorackb/sinesp-api/badge.svg
-[snyk]:            https://snyk.io
+[snyk]:            https://snyk.io/test/github/Sorackb/sinesp-api
 
 | PagSeguro       | PayPal          |
 | :-------------: | :-------------: |
