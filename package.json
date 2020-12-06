@@ -1,10 +1,10 @@
 {
   "name": "sinesp-api",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "description": "Módulo do Node.js que permite a consulta de placa no território nacional utilizando a base de dados da API-Carros",
   "main": "index.js",
   "engines": {
-    "node": ">=7.6"
+    "node": ">=10.12.0"
   },
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha --sort",

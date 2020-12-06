@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - 'lts/*'
   - 'node'
-  - '8'
+  - '10'
 
 before_install:
 # package-lock.json was introduced in npm@5

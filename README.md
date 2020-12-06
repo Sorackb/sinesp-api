@@ -6,6 +6,7 @@
 [![Dependency Status][dep-img]][dep]
 [![devDependency Status][devDep-img]][devDep]
 [![snyk badge][snyk-img]][snyk]
+[![node badge][node-img]][node]
 
 [npm-img]:         https://img.shields.io/npm/v/sinesp-api.svg
 [npm]:             https://www.npmjs.com/package/sinesp-api
@@ -19,6 +20,8 @@
 [devDep]:          https://david-dm.org/Sorackb/sinesp-api#info=devDependencies
 [snyk-img]:        https://snyk.io/test/github/Sorackb/sinesp-api/badge.svg
 [snyk]:            https://snyk.io/test/github/Sorackb/sinesp-api
+[node-img]:        https://img.shields.io/node/v/mocha.svg
+[node]:            https://nodejs.org/en/
 
 | PagSeguro       | PayPal          |
 | :-------------: | :-------------: |
