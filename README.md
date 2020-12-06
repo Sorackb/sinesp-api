@@ -1,11 +1,13 @@
 # sinesp-api
 
-[![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
+[![snyk badge][snyk-img]][snyk]
+
 [![Dependency Status][dep-img]][dep]
 [![devDependency Status][devDep-img]][devDep]
-[![snyk badge][snyk-img]][snyk]
+
+[![NPM version][npm-img]][npm]
 [![node badge][node-img]][node]
 
 [npm-img]:         https://img.shields.io/npm/v/sinesp-api.svg
